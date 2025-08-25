@@ -175,25 +175,6 @@ const Index = () => {
     }
   };
 
-  const sendTestEmail = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('send-test-email', {
-        body: { toEmail: user?.email },
-      });
-      if (error) throw error;
-      toast({
-        title: 'Test email sent',
-        description: `Sent to ${user?.email}. Please check Inbox/Spam.`,
-      });
-    } catch (error) {
-      console.error('Error sending test email:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to send test email. Please check sender domain and Resend logs.',
-        variant: 'destructive',
-      });
-    }
-  };
 
   if (loading) {
     return (
@@ -334,10 +315,6 @@ const Index = () => {
                 <Button onClick={sendTestNotifications} variant="outline" className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
                   Check Notifications
-                </Button>
-                <Button onClick={sendTestEmail} variant="secondary" className="flex items-center gap-2">
-                  <MailCheck className="h-4 w-4" />
-                  Send Test Email
                 </Button>
               </div>
             )}
