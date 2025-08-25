@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EnhancedDatePicker } from "@/components/ui/enhanced-date-picker";
+import { AvatarUpload } from "@/components/ui/avatar-upload";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +21,7 @@ interface Employee {
   birthday: string;
   phone?: string;
   address?: string;
+  avatar_url?: string;
 }
 
 interface EmployeeFormProps {
@@ -92,6 +94,7 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
     birthday: employee?.birthday || "",
     phone: employee?.phone || "",
     address: employee?.address || "",
+    avatar_url: employee?.avatar_url || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,7 +143,20 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Avatar Upload Section */}
+          {employee?.id && (
+            <div className="flex justify-center">
+              <AvatarUpload
+                currentAvatarUrl={formData.avatar_url}
+                employeeId={employee.id}
+                onAvatarUpdate={(url) => setFormData({ ...formData, avatar_url: url })}
+                fallbackText={`${formData.first_name?.[0] || ''}${formData.last_name?.[0] || ''}`}
+                size="lg"
+              />
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="first_name">First Name</Label>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Edit, Trash2, Mail, Phone, MapPin, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +21,7 @@ interface Employee {
   address?: string;
   invited_at?: string;
   user_id?: string;
+  avatar_url?: string;
 }
 
 interface EmployeeListProps {
@@ -98,50 +100,59 @@ const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps)
       {employees.map((employee) => (
         <Card key={employee.id} className="hover:shadow-md transition-shadow">
           <CardHeader className="pb-2">
-            <div className="flex justify-between items-start">
-              <div className="min-w-0 flex-1">
-                <CardTitle className="text-base truncate">
-                  {employee.first_name} {employee.last_name}
-                </CardTitle>
-                <CardDescription className="text-xs truncate">{employee.position}</CardDescription>
-              </div>
-              <div className="flex gap-1 flex-shrink-0">
-                {isAdmin && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 w-7 p-0"
-                      onClick={() => onEdit(employee)}
-                    >
-                      <Edit className="h-3 w-3" />
-                    </Button>
-                    {!employee.user_id && onInvite && (
+            <div className="flex items-start gap-3">
+              <Avatar className="h-12 w-12 flex-shrink-0">
+                <AvatarImage src={employee.avatar_url} alt={`${employee.first_name} ${employee.last_name}`} />
+                <AvatarFallback className="text-sm font-semibold">
+                  {employee.first_name[0]}{employee.last_name[0]}
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="flex justify-between items-start flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
+                  <CardTitle className="text-base truncate">
+                    {employee.first_name} {employee.last_name}
+                  </CardTitle>
+                  <CardDescription className="text-xs truncate">{employee.position}</CardDescription>
+                </div>
+                <div className="flex gap-1 flex-shrink-0">
+                  {isAdmin && (
+                    <>
                       <Button
                         size="sm"
                         variant="ghost"
                         className="h-7 w-7 p-0"
-                        onClick={() => onInvite(employee)}
-                        title="Send invitation"
+                        onClick={() => onEdit(employee)}
                       >
-                        <Send className="h-3 w-3" />
+                        <Edit className="h-3 w-3" />
                       </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 w-7 p-0"
-                      onClick={() =>
-                        handleDelete(
-                          employee.id,
-                          `${employee.first_name} ${employee.last_name}`
-                        )
-                      }
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </>
-                )}
+                      {!employee.user_id && onInvite && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0"
+                          onClick={() => onInvite(employee)}
+                          title="Send invitation"
+                        >
+                          <Send className="h-3 w-3" />
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0"
+                        onClick={() =>
+                          handleDelete(
+                            employee.id,
+                            `${employee.first_name} ${employee.last_name}`
+                          )
+                        }
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </CardHeader>

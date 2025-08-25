@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { AvatarUpload } from "@/components/ui/avatar-upload";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
@@ -20,6 +21,7 @@ interface Employee {
   address: string | null;
   birthday: string;
   job_entry_date: string;
+  avatar_url?: string;
 }
 
 interface EmployeeSelfServiceProps {
@@ -291,7 +293,19 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSave} className="space-y-4">
+        <div className="space-y-6">
+          {/* Avatar Upload Section */}
+          <div className="flex justify-center">
+            <AvatarUpload
+              currentAvatarUrl={employee.avatar_url}
+              employeeId={employee.id}
+              onAvatarUpdate={(url) => setEmployee({ ...employee, avatar_url: url })}
+              fallbackText={`${employee.first_name[0]}${employee.last_name[0]}`}
+              size="lg"
+            />
+          </div>
+
+          <form onSubmit={handleSave} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="first_name">First Name</Label>
@@ -391,7 +405,8 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
             <Save className="h-4 w-4 mr-2" />
             {saving ? "Saving..." : "Save Changes"}
           </Button>
-        </form>
+          </form>
+        </div>
       </CardContent>
     </Card>
   );
