@@ -17,6 +17,15 @@ import { Navigate } from "react-router-dom";
 import { User, Session } from "@supabase/supabase-js";
 
 const Index = () => {
+  console.log('Index render started', { 
+    timestamp: Date.now(),
+    loading: undefined, // will be set below
+    user: undefined, // will be set below
+    showEmployeeForm: undefined, // will be set below
+    showTimeOffForm: undefined, // will be set below
+    showInviteForm: undefined, // will be set below
+  });
+
   const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -187,6 +196,10 @@ const Index = () => {
   };
 
   const fetchNotificationSettings = async () => {
+    // Add defensive check to ensure only admins can fetch settings
+    if (!userProfile?.role || userProfile.role !== 'admin') {
+      return;
+    }
     try {
       const { data, error } = await supabase
         .from('notification_settings')
@@ -226,6 +239,16 @@ const Index = () => {
     }
   };
 
+  console.log('Index render state:', { 
+    loading, 
+    user: !!user, 
+    userProfile: !!userProfile,
+    showEmployeeForm, 
+    showTimeOffForm, 
+    showInviteForm,
+    inviteEmployeeData: !!inviteEmployeeData
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -243,6 +266,7 @@ const Index = () => {
 
   const isAdmin = userProfile?.role === 'admin';
 
+  // Render different components based on state
   if (showInviteForm && inviteEmployeeData) {
     return (
       <InviteEmployee
@@ -286,6 +310,7 @@ const Index = () => {
     );
   }
 
+  // Main dashboard UI
   return (
     <div className="min-h-screen bg-background">
       {/* Header with dark blue background */}
