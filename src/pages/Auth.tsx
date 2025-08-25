@@ -129,11 +129,11 @@ const Auth = () => {
         </CardHeader>
         <CardContent>
           <Tabs value={isSignUp ? "signup" : "signin"} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin" onClick={() => setIsSignUp(false)}>
+            <TabsList className="flex w-full">
+              <TabsTrigger value="signin" onClick={() => setIsSignUp(false)} className="flex-1">
                 Sign In
               </TabsTrigger>
-              <TabsTrigger value="signup" onClick={() => setIsSignUp(true)}>
+              <TabsTrigger value="signup" onClick={() => setIsSignUp(true)} className="flex-1">
                 Sign Up
               </TabsTrigger>
             </TabsList>
