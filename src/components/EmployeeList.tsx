@@ -94,40 +94,43 @@ const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps)
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {employees.map((employee) => (
         <Card key={employee.id} className="hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="text-lg">
+              <div className="min-w-0 flex-1">
+                <CardTitle className="text-base truncate">
                   {employee.first_name} {employee.last_name}
                 </CardTitle>
-                <CardDescription>{employee.position}</CardDescription>
+                <CardDescription className="text-xs truncate">{employee.position}</CardDescription>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 flex-shrink-0">
                 {isAdmin && (
                   <>
                     <Button
                       size="sm"
                       variant="ghost"
+                      className="h-7 w-7 p-0"
                       onClick={() => onEdit(employee)}
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-3 w-3" />
                     </Button>
                     {!employee.user_id && onInvite && (
                       <Button
                         size="sm"
                         variant="ghost"
+                        className="h-7 w-7 p-0"
                         onClick={() => onInvite(employee)}
                         title="Send invitation"
                       >
-                        <Send className="h-4 w-4" />
+                        <Send className="h-3 w-3" />
                       </Button>
                     )}
                     <Button
                       size="sm"
                       variant="ghost"
+                      className="h-7 w-7 p-0"
                       onClick={() =>
                         handleDelete(
                           employee.id,
@@ -135,52 +138,47 @@ const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps)
                         )
                       }
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   </>
                 )}
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2 text-xs">
             {employee.department && (
-              <Badge variant="secondary">{employee.department}</Badge>
+              <Badge variant="secondary" className="text-xs">{employee.department}</Badge>
             )}
             
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span>{employee.email}</span>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1 truncate">
+                <Mail className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                <span className="truncate">{employee.email}</span>
               </div>
               
               {employee.phone && (
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span>{employee.phone}</span>
-                </div>
-              )}
-              
-              {employee.address && (
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs">{employee.address}</span>
+                <div className="flex items-center gap-1">
+                  <Phone className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                  <span className="truncate">{employee.phone}</span>
                 </div>
               )}
             </div>
 
-            <div className="pt-2 border-t text-xs text-muted-foreground">
-              <div>Started: {format(new Date(employee.job_entry_date), "MMM d, yyyy")}</div>
-              <div>Birthday: {format(new Date(employee.birthday), "MMM d, yyyy")}</div>
-              {employee.user_id && (
-                <Badge variant="secondary" className="mt-2">
-                  Active Account
-                </Badge>
-              )}
-              {employee.invited_at && !employee.user_id && (
-                <Badge variant="outline" className="mt-2">
-                  Invited {format(new Date(employee.invited_at), "MMM d")}
-                </Badge>
-              )}
+            <div className="pt-1 border-t text-xs text-muted-foreground space-y-1">
+              <div>Started: {format(new Date(employee.job_entry_date), "MMM yyyy")}</div>
+              <div>Birthday: {format(new Date(employee.birthday), "MMM d")}</div>
+              <div className="flex flex-wrap gap-1">
+                {employee.user_id && (
+                  <Badge variant="secondary" className="text-xs px-1 py-0">
+                    Active
+                  </Badge>
+                )}
+                {employee.invited_at && !employee.user_id && (
+                  <Badge variant="outline" className="text-xs px-1 py-0">
+                    Invited
+                  </Badge>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

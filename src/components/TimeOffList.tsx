@@ -41,7 +41,7 @@ const TimeOffList = ({ refresh, isAdmin, currentUser }: TimeOffListProps) => {
         .from("time_off_requests")
         .select(`
           *,
-          employees!inner (
+          employees!time_off_requests_employee_id_fkey (
             first_name,
             last_name
           )

@@ -203,14 +203,21 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
         <div className="mb-8 flex justify-between items-start">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">HR Management System</h1>
-            <p className="text-xl text-muted-foreground">
-              {isAdmin 
-                ? "Manage employees, track time-off requests, and celebrate milestones"
-                : "Your employee self-service portal"
-              }
-            </p>
+          <div className="flex items-center gap-4">
+            <img 
+              src="/pixup-logo.png" 
+              alt="Pixup Logo" 
+              className="h-12 w-auto"
+            />
+            <div>
+              <h1 className="text-4xl font-bold mb-2">HR Management System</h1>
+              <p className="text-xl text-muted-foreground">
+                {isAdmin 
+                  ? "Manage employees, track time-off requests, and celebrate milestones"
+                  : "Your employee self-service portal"
+                }
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
