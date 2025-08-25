@@ -16,6 +16,15 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey!);
 const resend = new Resend(resendApiKey!);
 const fromEmail = Deno.env.get("NOTIFICATION_SENDER") || "Lovable HR <onboarding@resend.dev>";
 const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || "admin@yourcompany.com";
+
+// Validate adminEmail for Resend 'cc' field format
+const isValidCc =
+  !!adminEmail &&
+  (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail) || /.+<\s*[^\s@]+@[^\s@]+\.[^\s@]+\s*>/.test(adminEmail));
+if (adminEmail && !isValidCc) {
+  console.warn("ADMIN_NOTIFICATION_EMAIL is set but invalid format, skipping cc.");
+}
+
 interface Employee {
   id: string;
   first_name: string;
@@ -76,22 +85,15 @@ const handler = async (req: Request): Promise<Response> => {
       await resend.emails.send({
         from: fromEmail,
         to: [employee.email],
-        cc: [adminEmail],
-        subject: `🎉 Birthday Alert - ${employee.first_name} ${employee.last_name}`,
+        cc: isValidCc ? [adminEmail!] : undefined,
+        subject: `🎂 Happy Birthday, ${employee.first_name} ${employee.last_name}!`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #2563eb;">🎂 Birthday Celebration!</h2>
-            <p>It's <strong>${employee.first_name} ${employee.last_name}</strong>'s birthday today!</p>
-            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <h3>Employee Details:</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li><strong>Name:</strong> ${employee.first_name} ${employee.last_name}</li>
-                <li><strong>Position:</strong> ${employee.position}</li>
-                <li><strong>Email:</strong> ${employee.email}</li>
-                <li><strong>Age:</strong> ${age} years old</li>
-              </ul>
-            </div>
-            <p>Don't forget to wish them a happy birthday! 🎈</p>
+            <p>Hi ${employee.first_name} ${employee.last_name},</p>
+            <p>Wishing you a very Happy Birthday and a wonderful year ahead! 🎉</p>
+            <p>Thank you for being a valued part of our team — may this year bring you health, happiness, and success.</p>
+            <p>Enjoy your special day! 🎂🎈</p>
+            <p>Best wishes,<br/>PIXUP TEAM</p>
           </div>
         `,
       });
@@ -106,23 +108,15 @@ const handler = async (req: Request): Promise<Response> => {
       await resend.emails.send({
         from: fromEmail,
         to: [employee.email],
-        cc: [adminEmail],
-        subject: `🏆 Work Anniversary - ${employee.first_name} ${employee.last_name}`,
+        cc: isValidCc ? [adminEmail!] : undefined,
+        subject: `🎉 Happy Work Anniversary, ${employee.first_name} ${employee.last_name}!`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #059669;">🎊 Work Anniversary!</h2>
-            <p><strong>${employee.first_name} ${employee.last_name}</strong> is celebrating their work anniversary today!</p>
-            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <h3>Employee Details:</h3>
-              <ul style="list-style: none; padding: 0;">
-                <li><strong>Name:</strong> ${employee.first_name} ${employee.last_name}</li>
-                <li><strong>Position:</strong> ${employee.position}</li>
-                <li><strong>Email:</strong> ${employee.email}</li>
-                <li><strong>Years of Service:</strong> ${yearsOfService} years</li>
-                <li><strong>Started:</strong> ${new Date(employee.job_entry_date).toLocaleDateString()}</li>
-              </ul>
-            </div>
-            <p>Congratulations on their dedication and service! 🏅</p>
+            <p>Hi ${employee.first_name} ${employee.last_name},</p>
+            <p>Congratulations on your ${yearsOfService}-year anniversary with us! 🌟</p>
+            <p>We truly appreciate your hard work, dedication, and the positive impact you’ve made on our team.</p>
+            <p>Here’s to many more successful years together! 🥂</p>
+            <p>Best regards,<br/>PIXUP TEAM</p>
           </div>
         `,
       });
