@@ -193,6 +193,10 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      set_notification_time: {
+        Args: { p_time: string; p_timezone?: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

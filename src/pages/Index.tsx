@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Calendar, Plus, Mail, LogOut } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import EmployeeForm from "@/components/EmployeeForm";
 import EmployeeList from "@/components/EmployeeList";
 import TimeOffForm from "@/components/TimeOffForm";
@@ -27,6 +29,9 @@ const Index = () => {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [refreshEmployees, setRefreshEmployees] = useState(0);
   const [refreshTimeOff, setRefreshTimeOff] = useState(0);
+  const [notificationTime, setNotificationTime] = useState<string>('19:35');
+  const [notificationTimezone, setNotificationTimezone] = useState<string>('Europe/Istanbul');
+  const [notificationLoading, setNotificationLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -175,6 +180,45 @@ const Index = () => {
     }
   };
 
+  const fetchNotificationSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('notification_settings')
+        .select('notification_time, timezone')
+        .limit(1)
+        .single();
+      if (!error && data) {
+        setNotificationTime(String(data.notification_time).slice(0, 5));
+        setNotificationTimezone(data.timezone || 'Europe/Istanbul');
+      }
+    } catch (e) {
+      console.warn('Could not load notification settings', e);
+    }
+  };
+
+  const saveNotificationSettings = async () => {
+    try {
+      setNotificationLoading(true);
+      const { error } = await supabase.rpc('set_notification_time', {
+        p_time: `${notificationTime}:00`,
+        p_timezone: notificationTimezone,
+      });
+      if (error) throw error;
+      toast({
+        title: 'Notification time updated',
+        description: `Daily emails scheduled at ${notificationTime} (${notificationTimezone}).`,
+      });
+    } catch (e) {
+      console.error('Failed to update notification time', e);
+      toast({
+        title: 'Error',
+        description: 'Could not update notification time.',
+        variant: 'destructive',
+      });
+    } finally {
+      setNotificationLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -192,6 +236,12 @@ const Index = () => {
   }
 
   const isAdmin = userProfile?.role === 'admin';
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchNotificationSettings();
+    }
+  }, [isAdmin]);
 
   if (showInviteForm && inviteEmployeeData) {
     return (
@@ -287,11 +337,17 @@ const Index = () => {
 
         <Tabs defaultValue={isAdmin ? "employees" : "profile"} className="space-y-6">
           <div className="flex items-center justify-between">
-            <TabsList className={`grid ${isAdmin ? 'grid-cols-2 w-[400px]' : 'grid-cols-2 w-[400px]'}`}>
+            <TabsList className={`grid ${isAdmin ? 'grid-cols-3 w-[520px]' : 'grid-cols-2 w-[400px]'}`}>
               {isAdmin && (
                 <TabsTrigger value="employees" className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   Employees
+                </TabsTrigger>
+              )}
+              {isAdmin && (
+                <TabsTrigger value="notifications" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Notifications
                 </TabsTrigger>
               )}
               {!isAdmin && (
@@ -344,6 +400,29 @@ const Index = () => {
           {!isAdmin && (
             <TabsContent value="profile">
               <EmployeeSelfService user={user} />
+            </TabsContent>
+          )}
+
+          {isAdmin && (
+            <TabsContent value="notifications">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notification Settings</CardTitle>
+                  <CardDescription>Set daily email time (Europe/Istanbul, GMT+3)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-end gap-4 max-w-md">
+                    <div className="flex-1">
+                      <Label htmlFor="notify-time">Send time</Label>
+                      <Input id="notify-time" type="time" value={notificationTime} onChange={(e) => setNotificationTime(e.target.value)} />
+                      <p className="text-xs text-muted-foreground mt-1">Timezone: {notificationTimezone}</p>
+                    </div>
+                    <Button onClick={saveNotificationSettings} disabled={notificationLoading}>
+                      {notificationLoading ? 'Saving...' : 'Save'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           )}
 
