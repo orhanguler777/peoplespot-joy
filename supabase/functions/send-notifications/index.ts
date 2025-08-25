@@ -14,7 +14,8 @@ const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey!);
 const resend = new Resend(resendApiKey!);
-
+const fromEmail = Deno.env.get("NOTIFICATION_SENDER") || "Lovable HR <onboarding@resend.dev>";
+const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || "admin@yourcompany.com";
 interface Employee {
   id: string;
   first_name: string;
@@ -73,8 +74,8 @@ const handler = async (req: Request): Promise<Response> => {
       const age = today.getFullYear() - new Date(employee.birthday).getFullYear();
       
       await resend.emails.send({
-        from: "Lovable HR <onboarding@resend.dev>",
-        to: ["admin@yourcompany.com"], // Change this to your admin email
+        from: fromEmail,
+        to: [adminEmail], // Change this to your admin email
         subject: `🎉 Birthday Alert - ${employee.first_name} ${employee.last_name}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -102,8 +103,8 @@ const handler = async (req: Request): Promise<Response> => {
       const yearsOfService = today.getFullYear() - new Date(employee.job_entry_date).getFullYear();
       
       await resend.emails.send({
-        from: "Lovable HR <onboarding@resend.dev>",
-        to: ["admin@yourcompany.com"], // Change this to your admin email
+        from: fromEmail,
+        to: [adminEmail], // Change this to your admin email
         subject: `🏆 Work Anniversary - ${employee.first_name} ${employee.last_name}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
