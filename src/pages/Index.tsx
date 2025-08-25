@@ -61,6 +61,12 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (userProfile?.role === 'admin') {
+      fetchNotificationSettings();
+    }
+  }, [userProfile?.role]);
+
   const fetchUserProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
@@ -236,12 +242,6 @@ const Index = () => {
   }
 
   const isAdmin = userProfile?.role === 'admin';
-
-  useEffect(() => {
-    if (isAdmin) {
-      fetchNotificationSettings();
-    }
-  }, [isAdmin]);
 
   if (showInviteForm && inviteEmployeeData) {
     return (
