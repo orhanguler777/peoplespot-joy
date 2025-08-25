@@ -227,11 +227,11 @@ const Index = () => {
         title: 'Notification time updated',
         description: `Daily emails scheduled at ${notificationTime} (${notificationTimezone}).`,
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to update notification time', e);
       toast({
         title: 'Error',
-        description: 'Could not update notification time.',
+        description: `Could not update notification time. ${e?.message || ''}`.trim(),
         variant: 'destructive',
       });
     } finally {
