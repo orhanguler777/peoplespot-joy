@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Calendar, Plus, Mail, MailCheck, LogOut } from "lucide-react";
+import { Users, Calendar, Plus, Mail, LogOut } from "lucide-react";
 import EmployeeForm from "@/components/EmployeeForm";
 import EmployeeList from "@/components/EmployeeList";
 import TimeOffForm from "@/components/TimeOffForm";
