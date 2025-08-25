@@ -75,7 +75,8 @@ const handler = async (req: Request): Promise<Response> => {
       
       await resend.emails.send({
         from: fromEmail,
-        to: [adminEmail], // Change this to your admin email
+        to: [employee.email],
+        cc: [adminEmail],
         subject: `🎉 Birthday Alert - ${employee.first_name} ${employee.last_name}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -104,7 +105,8 @@ const handler = async (req: Request): Promise<Response> => {
       
       await resend.emails.send({
         from: fromEmail,
-        to: [adminEmail], // Change this to your admin email
+        to: [employee.email],
+        cc: [adminEmail],
         subject: `🏆 Work Anniversary - ${employee.first_name} ${employee.last_name}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
