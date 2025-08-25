@@ -227,8 +227,8 @@ const Index = () => {
                 <p className="font-medium text-white">{user.email}</p>
                 <p className="text-xs text-slate-400 capitalize">{userProfile?.role || 'employee'}</p>
               </div>
-              <Button variant="outline" onClick={handleSignOut} className="border-slate-600 text-white hover:bg-slate-800">
-                <LogOut className="h-4 w-4 mr-2" />
+              <Button variant="outline" onClick={handleSignOut} className="bg-white border-white text-slate-900 hover:bg-slate-100">
+                <LogOut className="h-4 w-4 mr-2 text-slate-900" />
                 Sign Out
               </Button>
             </div>
