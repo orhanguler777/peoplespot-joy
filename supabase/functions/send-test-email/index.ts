@@ -36,10 +36,21 @@ const handler = async (req: Request): Promise<Response> => {
 
     const resend = new Resend(resendApiKey);
 
+    // Validate adminEmail for Resend 'cc' field format
+    const isValidCc =
+      !!adminEmail &&
+      (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail) ||
+        /.+<\s*[^\s@]+@[^\s@]+\.[^\s@]+\s*>/.test(adminEmail));
+    if (adminEmail && !isValidCc) {
+      console.warn(
+        "ADMIN_NOTIFICATION_EMAIL is set but invalid format, skipping cc."
+      );
+    }
+
     const emailResponse = await resend.emails.send({
       from: fromEmail,
       to: [toEmail],
-      cc: adminEmail ? [adminEmail] : undefined,
+      cc: isValidCc ? [adminEmail!] : undefined,
       subject: subject || "Test email from PixUp HR",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
