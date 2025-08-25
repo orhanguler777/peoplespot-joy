@@ -69,7 +69,7 @@ export function AvatarUpload({
 
       // Create file path
       const fileExt = file.name.split('.').pop();
-      const fileName = `${employeeId}/avatar.${fileExt}`;
+      const fileName = `${user.id}/avatar.${fileExt}`;
 
       // Upload file to storage
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -117,12 +117,17 @@ export function AvatarUpload({
     setUploading(true);
     
     try {
-      // Remove from storage if exists
-      if (avatarUrl) {
-        const fileName = `${employeeId}/avatar.${avatarUrl.split('.').pop()}`;
-        await supabase.storage
-          .from('employee-avatars')
-          .remove([fileName]);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      // Remove any files in the user's avatar folder
+      const { data: files, error: listError } = await supabase.storage
+        .from('employee-avatars')
+        .list(user.id);
+
+      if (!listError && files && files.length > 0) {
+        const paths = files.map((f) => `${user.id}/${f.name}`);
+        await supabase.storage.from('employee-avatars').remove(paths);
       }
 
       // Update employee record
