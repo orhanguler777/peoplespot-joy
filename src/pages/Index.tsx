@@ -209,7 +209,7 @@ const Index = () => {
               <img 
                 src="/pixup-logo.png" 
                 alt="Pixup Logo" 
-                className="h-10 w-auto"
+                className="h-16 w-auto"
               />
               <div>
                 <h1 className="text-2xl font-bold">HR Management System</h1>
