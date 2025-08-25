@@ -369,6 +369,10 @@ const Index = () => {
                   Employees
                 </TabsTrigger>
               )}
+              <TabsTrigger value="timeoff" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Time Off
+              </TabsTrigger>
               {isAdmin && (
                 <TabsTrigger value="notifications" className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
@@ -381,10 +385,6 @@ const Index = () => {
                   My Profile
                 </TabsTrigger>
               )}
-              <TabsTrigger value="timeoff" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Time Off
-              </TabsTrigger>
             </TabsList>
             
             {isAdmin && (
