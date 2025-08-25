@@ -149,9 +149,21 @@ const Index = () => {
       
       if (error) throw error;
       
+      let detailedMessage = `${data.birthdays} birthday(s) and ${data.anniversaries} anniversary notification(s) processed.`;
+      
+      if (data.birthdayDetails && data.birthdayDetails.length > 0) {
+        const birthdayNames = data.birthdayDetails.map((emp: any) => `${emp.name} (${emp.position})`).join(', ');
+        detailedMessage += `\n🎂 Birthdays: ${birthdayNames}`;
+      }
+      
+      if (data.anniversaryDetails && data.anniversaryDetails.length > 0) {
+        const anniversaryNames = data.anniversaryDetails.map((emp: any) => `${emp.name} (${emp.position})`).join(', ');
+        detailedMessage += `\n🏆 Anniversaries: ${anniversaryNames}`;
+      }
+      
       toast({
         title: "Notifications Check Complete",
-        description: `${data.birthdays} birthday(s) and ${data.anniversaries} anniversary notification(s) processed.`,
+        description: detailedMessage,
       });
     } catch (error) {
       console.error("Error sending notifications:", error);

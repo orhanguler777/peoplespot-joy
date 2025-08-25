@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,42 @@ interface EmployeeFormProps {
   onSave: () => void;
   onCancel: () => void;
 }
+
+const jobTitles = [
+  "Technical PM & QA Lead",
+  "Frontend Developer / Engineer", 
+  "Backend Developer / Engineer",
+  "Full Stack Developer",
+  "Mobile Developer",
+  "DevOps Engineer / Site Reliability Engineer",
+  "QA Engineer / Test Automation Engineer",
+  "UI/UX Designer",
+  "Product Manager / Owner",
+  "Technical Lead / Team Lead",
+  "CTO (Chief Technology Officer)",
+  "Sales Development Representative",
+  "Account Executive", 
+  "Account Manager",
+  "Customer Success Manager",
+  "Head of Sales / Sales Director",
+  "Marketing Manager / Specialist",
+  "Digital Marketing Manager",
+  "Content Writer / Copywriter",
+  "SEO/SEM Specialist",
+  "Community Manager",
+  "Creative Designer",
+  "CMO (Chief Marketing Officer)",
+  "HR / People Ops Manager",
+  "Recruiter / Talent Acquisition",
+  "Office Manager / Admin",
+  "Finance Manager / Controller",
+  "Legal / Compliance Officer",
+  "Customer Support / Helpdesk",
+  "CEO (Chief Executive Officer)",
+  "COO (Chief Operating Officer)",
+  "CFO (Chief Financial Officer)",
+  "Board Members / Advisors"
+];
 
 const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
   const { toast } = useToast();
@@ -133,14 +170,24 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="position">Position</Label>
-              <Input
-                id="position"
+              <Select
                 value={formData.position}
-                onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
+                onValueChange={(value) =>
+                  setFormData({ ...formData, position: value })
                 }
                 required
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a position" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobTitles.map((title) => (
+                    <SelectItem key={title} value={title}>
+                      {title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="department">Department</Label>

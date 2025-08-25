@@ -132,12 +132,25 @@ const handler = async (req: Request): Promise<Response> => {
 
     const totalNotifications = (birthdayEmployees?.length || 0) + (anniversaryEmployees?.length || 0);
 
+    // Prepare detailed response with names and positions
+    const birthdayDetails = birthdayEmployees?.map(emp => ({
+      name: `${emp.first_name} ${emp.last_name}`,
+      position: emp.position
+    })) || [];
+    
+    const anniversaryDetails = anniversaryEmployees?.map(emp => ({
+      name: `${emp.first_name} ${emp.last_name}`,
+      position: emp.position
+    })) || [];
+
     return new Response(
       JSON.stringify({
         success: true,
         message: `Notifications check completed. Sent ${totalNotifications} notifications.`,
         birthdays: birthdayEmployees?.length || 0,
         anniversaries: anniversaryEmployees?.length || 0,
+        birthdayDetails,
+        anniversaryDetails,
       }),
       {
         status: 200,
