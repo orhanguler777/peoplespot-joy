@@ -3,12 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon } from "lucide-react";
+import { EnhancedDatePicker } from "@/components/ui/enhanced-date-picker";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -204,74 +201,30 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Job Entry Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !formData.job_entry_date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.job_entry_date
-                      ? format(new Date(formData.job_entry_date), "PPP")
-                      : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={
-                      formData.job_entry_date
-                        ? new Date(formData.job_entry_date)
-                        : undefined
-                    }
-                    onSelect={(date) =>
-                      setFormData({
-                        ...formData,
-                        job_entry_date: date ? format(date, "yyyy-MM-dd") : "",
-                      })
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              <EnhancedDatePicker
+                date={formData.job_entry_date ? new Date(formData.job_entry_date) : undefined}
+                onSelect={(date) =>
+                  setFormData({
+                    ...formData,
+                    job_entry_date: date ? format(date, "yyyy-MM-dd") : "",
+                  })
+                }
+                placeholder="Select entry date"
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Birthday</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !formData.birthday && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.birthday
-                      ? format(new Date(formData.birthday), "PPP")
-                      : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={
-                      formData.birthday ? new Date(formData.birthday) : undefined
-                    }
-                    onSelect={(date) =>
-                      setFormData({
-                        ...formData,
-                        birthday: date ? format(date, "yyyy-MM-dd") : "",
-                      })
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              <EnhancedDatePicker
+                date={formData.birthday ? new Date(formData.birthday) : undefined}
+                onSelect={(date) =>
+                  setFormData({
+                    ...formData,
+                    birthday: date ? format(date, "yyyy-MM-dd") : "",
+                  })
+                }
+                placeholder="Select birthday"
+              />
             </div>
           </div>
 
