@@ -6,9 +6,11 @@ import { Check, X, Calendar, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface TimeOffRequest {
   id: string;
+  employee_id: string;
   request_type: string;
   start_date: string;
   end_date: string;
@@ -24,16 +26,18 @@ interface TimeOffRequest {
 
 interface TimeOffListProps {
   refresh: number;
+  isAdmin: boolean;
+  currentUser: SupabaseUser;
 }
 
-const TimeOffList = ({ refresh }: TimeOffListProps) => {
+const TimeOffList = ({ refresh, isAdmin, currentUser }: TimeOffListProps) => {
   const { toast } = useToast();
   const [requests, setRequests] = useState<TimeOffRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRequests = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("time_off_requests")
         .select(`
           *,
@@ -41,8 +45,27 @@ const TimeOffList = ({ refresh }: TimeOffListProps) => {
             first_name,
             last_name
           )
-        `)
-        .order("created_at", { ascending: false });
+        `);
+
+      // If not admin, only show their own requests
+      if (!isAdmin) {
+        // First get the employee record for this user
+        const { data: employeeData } = await supabase
+          .from("employees")
+          .select("id")
+          .eq("user_id", currentUser.id)
+          .single();
+
+        if (employeeData) {
+          query = query.eq("employee_id", employeeData.id);
+        } else {
+          // No employee record found, show empty array
+          setRequests([]);
+          return;
+        }
+      }
+
+      const { data, error } = await query.order("created_at", { ascending: false });
 
       if (error) throw error;
       setRequests((data as any) || []);
@@ -177,7 +200,7 @@ const TimeOffList = ({ refresh }: TimeOffListProps) => {
               Requested on {format(new Date(request.created_at), "MMM d, yyyy 'at' h:mm a")}
             </div>
 
-            {request.status === "pending" && (
+            {request.status === "pending" && isAdmin && (
               <div className="flex gap-2 pt-2">
                 <Button
                   size="sm"

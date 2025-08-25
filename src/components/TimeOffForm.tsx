@@ -12,6 +12,7 @@ import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { User } from "@supabase/supabase-js";
 
 interface Employee {
   id: string;
@@ -22,9 +23,11 @@ interface Employee {
 interface TimeOffFormProps {
   onSave: () => void;
   onCancel: () => void;
+  currentUser?: User;
+  isAdmin?: boolean;
 }
 
-const TimeOffForm = ({ onSave, onCancel }: TimeOffFormProps) => {
+const TimeOffForm = ({ onSave, onCancel, currentUser, isAdmin = false }: TimeOffFormProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -37,8 +40,38 @@ const TimeOffForm = ({ onSave, onCancel }: TimeOffFormProps) => {
   });
 
   useEffect(() => {
-    fetchEmployees();
-  }, []);
+    if (isAdmin) {
+      fetchEmployees();
+    } else if (currentUser) {
+      fetchCurrentUserEmployee();
+    }
+  }, [isAdmin, currentUser]);
+
+  const fetchCurrentUserEmployee = async () => {
+    if (!currentUser) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("employees")
+        .select("id, first_name, last_name")
+        .eq("user_id", currentUser.id)
+        .single();
+
+      if (error) throw error;
+      
+      if (data) {
+        setFormData(prev => ({ ...prev, employee_id: data.id }));
+        setEmployees([data]);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Could not find your employee record. Please contact HR.",
+        variant: "destructive",
+      });
+      console.error("Error fetching current user employee:", error);
+    }
+  };
 
   const fetchEmployees = async () => {
     try {

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Mail, Phone, MapPin } from "lucide-react";
+import { Edit, Trash2, Mail, Phone, MapPin, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -18,14 +18,18 @@ interface Employee {
   birthday: string;
   phone?: string;
   address?: string;
+  invited_at?: string;
+  user_id?: string;
 }
 
 interface EmployeeListProps {
   onEdit: (employee: Employee) => void;
+  onInvite?: (employee: Employee) => void;
   refresh: number;
+  isAdmin: boolean;
 }
 
-const EmployeeList = ({ onEdit, refresh }: EmployeeListProps) => {
+const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps) => {
   const { toast } = useToast();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,25 +106,39 @@ const EmployeeList = ({ onEdit, refresh }: EmployeeListProps) => {
                 <CardDescription>{employee.position}</CardDescription>
               </div>
               <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => onEdit(employee)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() =>
-                    handleDelete(
-                      employee.id,
-                      `${employee.first_name} ${employee.last_name}`
-                    )
-                  }
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                {isAdmin && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => onEdit(employee)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    {!employee.user_id && onInvite && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onInvite(employee)}
+                        title="Send invitation"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() =>
+                        handleDelete(
+                          employee.id,
+                          `${employee.first_name} ${employee.last_name}`
+                        )
+                      }
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </CardHeader>
@@ -153,6 +171,16 @@ const EmployeeList = ({ onEdit, refresh }: EmployeeListProps) => {
             <div className="pt-2 border-t text-xs text-muted-foreground">
               <div>Started: {format(new Date(employee.job_entry_date), "MMM d, yyyy")}</div>
               <div>Birthday: {format(new Date(employee.birthday), "MMM d, yyyy")}</div>
+              {employee.user_id && (
+                <Badge variant="secondary" className="mt-2">
+                  Active Account
+                </Badge>
+              )}
+              {employee.invited_at && !employee.user_id && (
+                <Badge variant="outline" className="mt-2">
+                  Invited {format(new Date(employee.invited_at), "MMM d")}
+                </Badge>
+              )}
             </div>
           </CardContent>
         </Card>

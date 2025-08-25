@@ -23,11 +23,13 @@ export type Database = {
           email: string
           first_name: string
           id: string
+          invited_at: string | null
           job_entry_date: string
           last_name: string
           phone: string | null
           position: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           address?: string | null
@@ -37,11 +39,13 @@ export type Database = {
           email: string
           first_name: string
           id?: string
+          invited_at?: string | null
           job_entry_date: string
           last_name: string
           phone?: string | null
           position: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           address?: string | null
@@ -51,13 +55,47 @@ export type Database = {
           email?: string
           first_name?: string
           id?: string
+          invited_at?: string | null
           job_entry_date?: string
           last_name?: string
           phone?: string | null
           position?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          employee_id: string | null
+          id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id?: string | null
+          id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       time_off_requests: {
         Row: {
