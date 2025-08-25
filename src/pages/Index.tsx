@@ -201,36 +201,43 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6">
-        <div className="mb-8 flex justify-between items-start">
-          <div className="flex items-center gap-4">
-            <img 
-              src="/pixup-logo.png" 
-              alt="Pixup Logo" 
-              className="h-12 w-auto"
-            />
-            <div>
-              <h1 className="text-4xl font-bold mb-2">HR Management System</h1>
-              <p className="text-xl text-muted-foreground">
-                {isAdmin 
-                  ? "Manage employees, track time-off requests, and celebrate milestones"
-                  : "Your employee self-service portal"
-                }
-              </p>
+      {/* Header with dark blue background */}
+      <div className="bg-slate-900 text-white">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <img 
+                src="/pixup-logo.png" 
+                alt="Pixup Logo" 
+                className="h-10 w-auto"
+              />
+              <div>
+                <h1 className="text-2xl font-bold">HR Management System</h1>
+                <p className="text-sm text-slate-300">
+                  {isAdmin 
+                    ? "Manage employees, track time-off requests, and celebrate milestones"
+                    : "Your employee self-service portal"
+                  }
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Welcome back</p>
-              <p className="font-medium">{user.email}</p>
-              <p className="text-xs text-muted-foreground capitalize">{userProfile?.role || 'employee'}</p>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-sm text-slate-300">Welcome back</p>
+                <p className="font-medium text-white">{user.email}</p>
+                <p className="text-xs text-slate-400 capitalize">{userProfile?.role || 'employee'}</p>
+              </div>
+              <Button variant="outline" onClick={handleSignOut} className="border-slate-600 text-white hover:bg-slate-800">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
             </div>
-            <Button variant="outline" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
           </div>
         </div>
+      </div>
+
+      {/* Main content */}
+      <div className="container mx-auto p-6">
 
         {!isAdmin && (
           <div className="mb-6">
