@@ -284,38 +284,40 @@ const Index = () => {
           </div>
         )}
 
-        {isAdmin && (
-          <div className="mb-6 flex gap-4">
-            <Button onClick={() => setShowEmployeeForm(true)} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Employee
-            </Button>
-            <Button onClick={sendTestNotifications} variant="outline" className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              Check Notifications
-            </Button>
-          </div>
-        )}
-
         <Tabs defaultValue={isAdmin ? "employees" : "profile"} className="space-y-6">
-          <TabsList className={`grid ${isAdmin ? 'grid-cols-2 w-[400px]' : 'grid-cols-2 w-[400px]'}`}>
+          <div className="flex items-center justify-between">
+            <TabsList className={`grid ${isAdmin ? 'grid-cols-2 w-[400px]' : 'grid-cols-2 w-[400px]'}`}>
+              {isAdmin && (
+                <TabsTrigger value="employees" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Employees
+                </TabsTrigger>
+              )}
+              {!isAdmin && (
+                <TabsTrigger value="profile" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  My Profile
+                </TabsTrigger>
+              )}
+              <TabsTrigger value="timeoff" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Time Off
+              </TabsTrigger>
+            </TabsList>
+            
             {isAdmin && (
-              <TabsTrigger value="employees" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Employees
-              </TabsTrigger>
+              <div className="flex gap-4">
+                <Button onClick={() => setShowEmployeeForm(true)} className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add Employee
+                </Button>
+                <Button onClick={sendTestNotifications} variant="outline" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Check Notifications
+                </Button>
+              </div>
             )}
-            {!isAdmin && (
-              <TabsTrigger value="profile" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                My Profile
-              </TabsTrigger>
-            )}
-            <TabsTrigger value="timeoff" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Time Off
-            </TabsTrigger>
-          </TabsList>
+          </div>
 
           {isAdmin && (
             <TabsContent value="employees">
