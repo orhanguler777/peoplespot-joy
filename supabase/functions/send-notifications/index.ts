@@ -42,27 +42,29 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Checking for birthdays and anniversaries on: ${todayFormatted}`);
 
-    // Check for birthdays today
-    const { data: birthdayEmployees, error: birthdayError } = await supabase
+    // Fetch employees and filter by today's month/day in code to avoid DATE LIKE errors
+    const { data: employees, error: employeesError } = await supabase
       .from("employees")
-      .select("*")
-      .like("birthday", `%-${todayFormatted}`);
+      .select("id, first_name, last_name, email, position, job_entry_date, birthday");
 
-    if (birthdayError) {
-      console.error("Error fetching birthday employees:", birthdayError);
-      throw birthdayError;
+    if (employeesError) {
+      console.error("Error fetching employees:", employeesError);
+      throw employeesError;
     }
 
-    // Check for work anniversaries today
-    const { data: anniversaryEmployees, error: anniversaryError } = await supabase
-      .from("employees")
-      .select("*")
-      .like("job_entry_date", `%-${todayFormatted}`);
+    // Filter birthdays today
+    const birthdayEmployees = (employees || []).filter((e: any) => {
+      if (!e.birthday) return false;
+      const d = new Date(e.birthday);
+      return d.getMonth() + 1 === today.getMonth() + 1 && d.getDate() === today.getDate();
+    });
 
-    if (anniversaryError) {
-      console.error("Error fetching anniversary employees:", anniversaryError);
-      throw anniversaryError;
-    }
+    // Filter work anniversaries today
+    const anniversaryEmployees = (employees || []).filter((e: any) => {
+      if (!e.job_entry_date) return false;
+      const d = new Date(e.job_entry_date);
+      return d.getMonth() + 1 === today.getMonth() + 1 && d.getDate() === today.getDate();
+    });
 
     console.log(`Found ${birthdayEmployees?.length || 0} birthdays and ${anniversaryEmployees?.length || 0} anniversaries`);
 
@@ -71,7 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
       const age = today.getFullYear() - new Date(employee.birthday).getFullYear();
       
       await resend.emails.send({
-        from: "HR System <hr@yourcompany.com>",
+        from: "Lovable HR <onboarding@resend.dev>",
         to: ["admin@yourcompany.com"], // Change this to your admin email
         subject: `🎉 Birthday Alert - ${employee.first_name} ${employee.last_name}`,
         html: `
@@ -100,7 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
       const yearsOfService = today.getFullYear() - new Date(employee.job_entry_date).getFullYear();
       
       await resend.emails.send({
-        from: "HR System <hr@yourcompany.com>",
+        from: "Lovable HR <onboarding@resend.dev>",
         to: ["admin@yourcompany.com"], // Change this to your admin email
         subject: `🏆 Work Anniversary - ${employee.first_name} ${employee.last_name}`,
         html: `
