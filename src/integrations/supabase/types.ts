@@ -14,7 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      employees: {
+        Row: {
+          address: string | null
+          birthday: string
+          created_at: string
+          department: string | null
+          email: string
+          first_name: string
+          id: string
+          job_entry_date: string
+          last_name: string
+          phone: string | null
+          position: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          birthday: string
+          created_at?: string
+          department?: string | null
+          email: string
+          first_name: string
+          id?: string
+          job_entry_date: string
+          last_name: string
+          phone?: string | null
+          position: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          birthday?: string
+          created_at?: string
+          department?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          job_entry_date?: string
+          last_name?: string
+          phone?: string | null
+          position?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      time_off_requests: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          days_requested: number
+          employee_id: string
+          end_date: string
+          id: string
+          reason: string | null
+          request_type: string
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          days_requested: number
+          employee_id: string
+          end_date: string
+          id?: string
+          reason?: string | null
+          request_type: string
+          start_date: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          days_requested?: number
+          employee_id?: string
+          end_date?: string
+          id?: string
+          reason?: string | null
+          request_type?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_off_requests_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_off_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
