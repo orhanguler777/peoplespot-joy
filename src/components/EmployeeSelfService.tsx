@@ -31,6 +31,17 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [newProfileData, setNewProfileData] = useState({
+    first_name: "",
+    last_name: "",
+    email: user.email || "",
+    position: "",
+    department: "",
+    phone: "",
+    address: "",
+    birthday: "",
+    job_entry_date: "",
+  });
 
   useEffect(() => {
     fetchEmployeeData();
@@ -104,18 +115,166 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
     );
   }
 
+  const handleCreateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setSaving(true);
+    try {
+      const { data, error } = await supabase
+        .from("employees")
+        .insert({
+          first_name: newProfileData.first_name,
+          last_name: newProfileData.last_name,
+          email: newProfileData.email,
+          position: newProfileData.position,
+          department: newProfileData.department || null,
+          phone: newProfileData.phone || null,
+          address: newProfileData.address || null,
+          birthday: newProfileData.birthday,
+          job_entry_date: newProfileData.job_entry_date,
+          user_id: user.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setEmployee(data);
+      toast({
+        title: "Profile Created",
+        description: "Your employee profile has been created successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to create your profile.",
+        variant: "destructive",
+      });
+      console.error("Error creating profile:", error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!employee) {
     return (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <UserIcon className="h-5 w-5" />
-            Employee Profile
+            Complete Your Profile
           </CardTitle>
           <CardDescription>
-            Your employee record hasn't been created yet. Please contact HR to set up your profile.
+            Please fill in your employee information to get started
           </CardDescription>
         </CardHeader>
+        <CardContent>
+          <form onSubmit={handleCreateProfile} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="first_name">First Name *</Label>
+                <Input
+                  id="first_name"
+                  value={newProfileData.first_name}
+                  onChange={(e) => setNewProfileData({ ...newProfileData, first_name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="last_name">Last Name *</Label>
+                <Input
+                  id="last_name"
+                  value={newProfileData.last_name}
+                  onChange={(e) => setNewProfileData({ ...newProfileData, last_name: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newProfileData.email}
+                  onChange={(e) => setNewProfileData({ ...newProfileData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="position">Position *</Label>
+                <Input
+                  id="position"
+                  value={newProfileData.position}
+                  onChange={(e) => setNewProfileData({ ...newProfileData, position: e.target.value })}
+                  placeholder="e.g. Software Developer"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="department">Department</Label>
+                <Input
+                  id="department"
+                  value={newProfileData.department}
+                  onChange={(e) => setNewProfileData({ ...newProfileData, department: e.target.value })}
+                  placeholder="e.g. Engineering"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  value={newProfileData.phone}
+                  onChange={(e) => setNewProfileData({ ...newProfileData, phone: e.target.value })}
+                  placeholder="Enter your phone number"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="birthday">Birthday *</Label>
+                <Input
+                  id="birthday"
+                  type="date"
+                  value={newProfileData.birthday}
+                  onChange={(e) => setNewProfileData({ ...newProfileData, birthday: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="job_entry_date">Start Date *</Label>
+                <Input
+                  id="job_entry_date"
+                  type="date"
+                  value={newProfileData.job_entry_date}
+                  onChange={(e) => setNewProfileData({ ...newProfileData, job_entry_date: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="address">Address</Label>
+              <Textarea
+                id="address"
+                value={newProfileData.address}
+                onChange={(e) => setNewProfileData({ ...newProfileData, address: e.target.value })}
+                placeholder="Enter your address"
+                rows={3}
+              />
+            </div>
+
+            <Button type="submit" disabled={saving} className="w-full">
+              <Save className="h-4 w-4 mr-2" />
+              {saving ? "Creating Profile..." : "Create Profile"}
+            </Button>
+          </form>
+        </CardContent>
       </Card>
     );
   }
