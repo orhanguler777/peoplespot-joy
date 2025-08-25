@@ -14,7 +14,7 @@ const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey!);
 const resend = new Resend(resendApiKey!);
-const fromEmail = Deno.env.get("NOTIFICATION_SENDER") || "CELEBRATION 🎉 🎉🌟🌟 🎉 <onboarding@resend.dev>";
+const fromEmail = Deno.env.get("NOTIFICATION_SENDER") || "CELEBRATION 🎉 🎉🌟🌟 🎉 <hr@pixupplay.com>";
 const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || "admin@yourcompany.com";
 
 // Validate adminEmail for Resend 'cc' field format

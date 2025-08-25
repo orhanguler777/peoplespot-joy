@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 const resendApiKey = Deno.env.get("RESEND_API_KEY");
-const fromEmail = Deno.env.get("NOTIFICATION_SENDER") || "CELEBRATION 🎉 🎉🌟🌟 🎉 <onboarding@resend.dev>";
+const fromEmail = Deno.env.get("NOTIFICATION_SENDER") || "CELEBRATION 🎉 🎉🌟🌟 🎉 <hr@pixupplay.com>";
 const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || undefined;
 
 interface TestEmailBody {
