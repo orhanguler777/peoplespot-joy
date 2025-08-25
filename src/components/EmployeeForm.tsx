@@ -64,6 +64,21 @@ const jobTitles = [
   "Board Members / Advisors"
 ];
 
+const departments = [
+  "Technical / Engineering",
+  "Product",
+  "Quality Assurance",
+  "Design / UI-UX",
+  "Sales",
+  "Marketing",
+  "Customer Success",
+  "Human Resources (HR) / People Operations",
+  "Finance",
+  "Legal & Compliance",
+  "Operations / Administration",
+  "Executive / Leadership"
+];
+
 const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -188,13 +203,23 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="department">Department</Label>
-              <Input
-                id="department"
+              <Select
                 value={formData.department}
-                onChange={(e) =>
-                  setFormData({ ...formData, department: e.target.value })
+                onValueChange={(value) =>
+                  setFormData({ ...formData, department: value })
                 }
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments.map((dept) => (
+                    <SelectItem key={dept} value={dept}>
+                      {dept}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
