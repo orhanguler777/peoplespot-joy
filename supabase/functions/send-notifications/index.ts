@@ -13,7 +13,8 @@ const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey!);
-const resend = new Resend(resendApiKey!);
+// Initialize Resend inside handler to avoid crashes when key is missing
+// const resend = new Resend(resendApiKey!);
 const fromRaw = Deno.env.get("NOTIFICATION_SENDER") || "PIXUP TEAM <onboarding@resend.dev>";
 const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || "admin@yourcompany.com";
 
@@ -58,6 +59,17 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     console.log("Starting notification check...");
 
+    // Initialize Resend client safely
+    const apiKey = Deno.env.get("RESEND_API_KEY");
+    if (!apiKey) {
+      console.error("RESEND_API_KEY is not configured");
+      return new Response(
+        JSON.stringify({ success: false, error: "RESEND_API_KEY is not configured" }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+    const resendClient = new Resend(apiKey);
+
     // Get today's date in YYYY-MM-DD format
     const today = new Date();
     const todayMonth = String(today.getMonth() + 1).padStart(2, "0");
@@ -96,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
     for (const employee of birthdayEmployees || []) {
       const age = today.getFullYear() - new Date(employee.birthday).getFullYear();
       
-const birthdayResp = await resend.emails.send({
+const birthdayResp = await resendClient.emails.send({
         from: fromEmail,
         to: [employee.email],
         cc: isValidCc ? [adminEmail!] : undefined,
@@ -125,7 +137,7 @@ const birthdayResp = await resend.emails.send({
     for (const employee of anniversaryEmployees || []) {
       const yearsOfService = today.getFullYear() - new Date(employee.job_entry_date).getFullYear();
       
-const anniversaryResp = await resend.emails.send({
+const anniversaryResp = await resendClient.emails.send({
         from: fromEmail,
         to: [employee.email],
         cc: isValidCc ? [adminEmail!] : undefined,
