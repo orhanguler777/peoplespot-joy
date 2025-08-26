@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ModernDatePicker } from "@/components/ui/modern-date-picker";
+import { CleanDatePicker } from "@/components/ui/clean-date-picker";
 import { AvatarUpload } from "@/components/ui/avatar-upload";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -244,7 +244,7 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="birthday">Birthday *</Label>
-                <ModernDatePicker
+                <CleanDatePicker
                   date={newProfileData.birthday ? new Date(newProfileData.birthday) : undefined}
                   onSelect={(date) => 
                     setNewProfileData({ 
@@ -254,13 +254,12 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
                   }
                   placeholder="Select your birthday"
                   disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                  fromYear={1940}
-                  toYear={new Date().getFullYear()}
+                  required
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="job_entry_date">Job Starting Date *</Label>
-                <ModernDatePicker
+                <CleanDatePicker
                   date={newProfileData.job_entry_date ? new Date(newProfileData.job_entry_date) : undefined}
                   onSelect={(date) => 
                     setNewProfileData({ 
@@ -269,8 +268,7 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
                     })
                   }
                   placeholder="Select your starting date"
-                  fromYear={1980}
-                  toYear={new Date().getFullYear() + 5}
+                  required
                 />
               </div>
             </div>
@@ -387,7 +385,7 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="birthday">Birthday</Label>
-              <ModernDatePicker
+              <CleanDatePicker
                 date={employee.birthday ? new Date(employee.birthday) : undefined}
                 onSelect={(date) => 
                   setEmployee({ 
@@ -397,13 +395,11 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
                 }
                 placeholder="Select your birthday"
                 disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                fromYear={1940}
-                toYear={new Date().getFullYear()}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="job_entry_date">Job Starting Date</Label>
-              <ModernDatePicker
+              <CleanDatePicker
                 date={employee.job_entry_date ? new Date(employee.job_entry_date) : undefined}
                 onSelect={(date) => 
                   setEmployee({ 
@@ -412,8 +408,6 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
                   })
                 }
                 placeholder="Select your starting date"
-                fromYear={1980}
-                toYear={new Date().getFullYear() + 5}
               />
             </div>
           </div>
