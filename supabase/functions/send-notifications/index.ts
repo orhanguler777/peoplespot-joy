@@ -15,7 +15,7 @@ const resendApiKey = Deno.env.get("RESEND_API_KEY");
 const supabase = createClient(supabaseUrl, supabaseServiceKey!);
 // Initialize Resend inside handler to avoid crashes when key is missing
 // const resend = new Resend(resendApiKey!);
-const fromEmail = Deno.env.get("NOTIFICATION_SENDER") || "PIXUP HR <noreply@orhanguler.uk>";
+const fromRaw = Deno.env.get("NOTIFICATION_SENDER") || "PIXUP HR <noreply@orhanguler.uk>";
 const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || "orhan777@gmail.com";
 
 // Validate 'from' email: must be ASCII and proper format
@@ -26,7 +26,7 @@ const isValidEmailOrNameEmail = (s: string) =>
 let fromEmail = fromRaw;
 if (!isAscii(fromRaw) || !isValidEmailOrNameEmail(fromRaw)) {
   console.warn("NOTIFICATION_SENDER invalid or contains non-ASCII characters. Falling back to onboarding@resend.dev");
-  fromEmail = "PIXUP TEAM <onboarding@resend.dev>";
+  fromEmail = "PIXUP HR <noreply@orhanguler.uk>";
 }
 
 // Validate adminEmail for Resend 'cc' field format
