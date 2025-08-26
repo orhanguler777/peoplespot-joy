@@ -319,7 +319,7 @@ const Index = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <img 
-                src="/pixup-logo.png" 
+                src="/lovable-uploads/b0cbec1a-8a8d-4f30-86da-432e07c925a8.png" 
                 alt="Pixup Logo" 
                 className="h-16 w-auto"
               />
