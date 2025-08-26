@@ -14,13 +14,24 @@ const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey!);
 const resend = new Resend(resendApiKey!);
-const fromEmail = Deno.env.get("NOTIFICATION_SENDER") || "CELEBRATION 🎉 🎉🌟🌟 🎉 <onboarding@resend.dev>";
+const fromRaw = Deno.env.get("NOTIFICATION_SENDER") || "PIXUP TEAM <onboarding@resend.dev>";
 const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") || "admin@yourcompany.com";
+
+// Validate 'from' email: must be ASCII and proper format
+const isAscii = (s: string) => /^[\x00-\x7F]+$/.test(s);
+const isValidEmailOrNameEmail = (s: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) || /.+<\s*[^\s@]+@[^\s@]+\.[^\s@]+\s*>/.test(s);
+
+let fromEmail = fromRaw;
+if (!isAscii(fromRaw) || !isValidEmailOrNameEmail(fromRaw)) {
+  console.warn("NOTIFICATION_SENDER invalid or contains non-ASCII characters. Falling back to onboarding@resend.dev");
+  fromEmail = "PIXUP TEAM <onboarding@resend.dev>";
+}
 
 // Validate adminEmail for Resend 'cc' field format
 const isValidCc =
   !!adminEmail &&
-  (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail) || /.+<\s*[^\s@]+@[^\s@]+\.[^\s@]+\s*>/.test(adminEmail));
+  (isValidEmailOrNameEmail(adminEmail));
 if (adminEmail && !isValidCc) {
   console.warn("ADMIN_NOTIFICATION_EMAIL is set but invalid format, skipping cc.");
 }
@@ -85,7 +96,7 @@ const handler = async (req: Request): Promise<Response> => {
     for (const employee of birthdayEmployees || []) {
       const age = today.getFullYear() - new Date(employee.birthday).getFullYear();
       
-      await resend.emails.send({
+const birthdayResp = await resend.emails.send({
         from: fromEmail,
         to: [employee.email],
         cc: isValidCc ? [adminEmail!] : undefined,
@@ -101,7 +112,12 @@ const handler = async (req: Request): Promise<Response> => {
         `,
       });
 
-      console.log(`Birthday notification sent for ${employee.first_name} ${employee.last_name}`);
+      console.log(`Birthday email response for ${employee.email}:`, birthdayResp);
+      if (birthdayResp?.error) {
+        console.warn(`Birthday email error for ${employee.email}:`, birthdayResp.error);
+      } else {
+        console.log(`Birthday notification sent for ${employee.first_name} ${employee.last_name}`);
+      }
       await sleep(600); // throttle to <= 2 req/sec
     }
 
@@ -109,7 +125,7 @@ const handler = async (req: Request): Promise<Response> => {
     for (const employee of anniversaryEmployees || []) {
       const yearsOfService = today.getFullYear() - new Date(employee.job_entry_date).getFullYear();
       
-      await resend.emails.send({
+const anniversaryResp = await resend.emails.send({
         from: fromEmail,
         to: [employee.email],
         cc: isValidCc ? [adminEmail!] : undefined,
@@ -125,7 +141,12 @@ const handler = async (req: Request): Promise<Response> => {
         `,
       });
 
-      console.log(`Anniversary notification sent for ${employee.first_name} ${employee.last_name}`);
+      console.log(`Anniversary email response for ${employee.email}:`, anniversaryResp);
+      if (anniversaryResp?.error) {
+        console.warn(`Anniversary email error for ${employee.email}:`, anniversaryResp.error);
+      } else {
+        console.log(`Anniversary notification sent for ${employee.first_name} ${employee.last_name}`);
+      }
       await sleep(600); // throttle to <= 2 req/sec
     }
 
