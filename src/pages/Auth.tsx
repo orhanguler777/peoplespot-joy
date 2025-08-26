@@ -92,6 +92,16 @@ const Auth = () => {
         title: "Account created!",
         description: "Please check your email to verify your account.",
       });
+
+      // Redirect to sign-in form
+      setIsSignUp(false);
+      
+      // Clear form data
+      setFormData({
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
     } catch (error: any) {
       toast({
         title: "Sign up failed",
