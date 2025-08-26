@@ -352,15 +352,6 @@ const Index = () => {
       {/* Main content */}
       <div className="container mx-auto p-6">
 
-        {!isAdmin && (
-          <div className="mb-6">
-            <Button onClick={() => setShowTimeOffForm(true)} className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Request Time Off
-            </Button>
-          </div>
-        )}
-
         <Tabs defaultValue={isAdmin ? "employees" : "profile"} className="space-y-6">
           <div className="flex items-center justify-between">
             <TabsList className={`grid ${isAdmin ? 'grid-cols-3 w-[520px]' : 'grid-cols-2 w-[400px]'}`}>
@@ -368,6 +359,12 @@ const Index = () => {
                 <TabsTrigger value="employees" className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   Employees
+                </TabsTrigger>
+              )}
+              {!isAdmin && (
+                <TabsTrigger value="profile" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  My Profile
                 </TabsTrigger>
               )}
               <TabsTrigger value="timeoff" className="flex items-center gap-2">
@@ -378,12 +375,6 @@ const Index = () => {
                 <TabsTrigger value="notifications" className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
                   Notifications
-                </TabsTrigger>
-              )}
-              {!isAdmin && (
-                <TabsTrigger value="profile" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  My Profile
                 </TabsTrigger>
               )}
             </TabsList>
@@ -455,13 +446,23 @@ const Index = () => {
           <TabsContent value="timeoff">
             <Card>
               <CardHeader>
-                <CardTitle>Time-Off Requests</CardTitle>
-                <CardDescription>
-                  {isAdmin 
-                    ? "Review and manage employee time-off requests"
-                    : "View and manage your time-off requests"
-                  }
-                </CardDescription>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Time-Off Requests</CardTitle>
+                    <CardDescription>
+                      {isAdmin 
+                        ? "Review and manage employee time-off requests"
+                        : "View and manage your time-off requests"
+                      }
+                    </CardDescription>
+                  </div>
+                  {!isAdmin && (
+                    <Button onClick={() => setShowTimeOffForm(true)} className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Request Time Off
+                    </Button>
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
                 <TimeOffList 
