@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { CleanDatePicker } from "@/components/ui/clean-date-picker";
 import { AvatarUpload } from "@/components/ui/avatar-upload";
@@ -11,6 +12,58 @@ import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
 import { Calendar, Save, User as UserIcon } from "lucide-react";
 import { format } from "date-fns";
+
+// Job titles and departments - same as EmployeeForm for consistency
+const jobTitles = [
+  "Technical PM & QA Lead",
+  "Frontend Developer / Engineer", 
+  "Backend Developer / Engineer",
+  "Full Stack Developer",
+  "Mobile Developer",
+  "DevOps Engineer / Site Reliability Engineer",
+  "QA Engineer / Test Automation Engineer",
+  "UI/UX Designer",
+  "Product Manager / Owner",
+  "Technical Lead / Team Lead",
+  "CTO (Chief Technology Officer)",
+  "Sales Development Representative",
+  "Account Executive", 
+  "Account Manager",
+  "Customer Success Manager",
+  "Head of Sales / Sales Director",
+  "Marketing Manager / Specialist",
+  "Digital Marketing Manager",
+  "Content Writer / Copywriter",
+  "SEO/SEM Specialist",
+  "Community Manager",
+  "Creative Designer",
+  "CMO (Chief Marketing Officer)",
+  "HR / People Ops Manager",
+  "Recruiter / Talent Acquisition",
+  "Office Manager / Admin",
+  "Finance Manager / Controller",
+  "Legal / Compliance Officer",
+  "Customer Support / Helpdesk",
+  "CEO (Chief Executive Officer)",
+  "COO (Chief Operating Officer)",
+  "CFO (Chief Financial Officer)",
+  "Board Members / Advisors"
+];
+
+const departments = [
+  "Technical / Engineering",
+  "Product",
+  "Quality Assurance",
+  "Design / UI-UX",
+  "Sales",
+  "Marketing",
+  "Customer Success",
+  "Human Resources (HR) / People Operations",
+  "Finance",
+  "Legal & Compliance",
+  "Operations / Administration",
+  "Executive / Leadership"
+];
 
 interface Employee {
   id: string;
@@ -87,6 +140,8 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
         .update({
           first_name: employee.first_name,
           last_name: employee.last_name,
+          position: employee.position,
+          department: employee.department,
           phone: employee.phone,
           address: employee.address,
           birthday: employee.birthday,
@@ -210,25 +265,43 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="position">Position *</Label>
-                <Input
-                  id="position"
+                <Select
                   value={newProfileData.position}
-                  onChange={(e) => setNewProfileData({ ...newProfileData, position: e.target.value })}
-                  placeholder="e.g. Software Developer"
+                  onValueChange={(value) => setNewProfileData({ ...newProfileData, position: value })}
                   required
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a position" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {jobTitles.map((title) => (
+                      <SelectItem key={title} value={title}>
+                        {title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="department">Department</Label>
-                <Input
-                  id="department"
+                <Select
                   value={newProfileData.department}
-                  onChange={(e) => setNewProfileData({ ...newProfileData, department: e.target.value })}
-                  placeholder="e.g. Engineering"
-                />
+                  onValueChange={(value) => setNewProfileData({ ...newProfileData, department: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone</Label>
@@ -351,25 +424,43 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="position">Position (Read Only)</Label>
-              <Input
-                id="position"
+              <Label htmlFor="position">Position</Label>
+              <Select
                 value={employee.position}
-                disabled
-                className="bg-muted"
-              />
+                onValueChange={(value) => setEmployee({ ...employee, position: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a position" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobTitles.map((title) => (
+                    <SelectItem key={title} value={title}>
+                      {title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="department">Department (Read Only)</Label>
-              <Input
-                id="department"
-                value={employee.department || "Not assigned"}
-                disabled
-                className="bg-muted"
-              />
+              <Label htmlFor="department">Department</Label>
+              <Select
+                value={employee.department || ""}
+                onValueChange={(value) => setEmployee({ ...employee, department: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments.map((dept) => (
+                    <SelectItem key={dept} value={dept}>
+                      {dept}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>
