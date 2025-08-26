@@ -200,7 +200,7 @@ const TimeOffForm = ({ onSave, onCancel, currentUser, isAdmin = false }: TimeOff
                       : "Pick start date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={
@@ -213,6 +213,10 @@ const TimeOffForm = ({ onSave, onCancel, currentUser, isAdmin = false }: TimeOff
                         ...formData,
                         start_date: date ? format(date, "yyyy-MM-dd") : "",
                       })
+                    }
+                    disabled={(date) =>
+                      date < new Date(new Date().setHours(0, 0, 0, 0)) ||
+                      (formData.end_date && date > new Date(formData.end_date))
                     }
                     initialFocus
                   />
@@ -237,7 +241,7 @@ const TimeOffForm = ({ onSave, onCancel, currentUser, isAdmin = false }: TimeOff
                       : "Pick end date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={
@@ -248,6 +252,10 @@ const TimeOffForm = ({ onSave, onCancel, currentUser, isAdmin = false }: TimeOff
                         ...formData,
                         end_date: date ? format(date, "yyyy-MM-dd") : "",
                       })
+                    }
+                    disabled={(date) =>
+                      date < new Date(new Date().setHours(0, 0, 0, 0)) ||
+                      (formData.start_date && date < new Date(formData.start_date))
                     }
                     initialFocus
                   />

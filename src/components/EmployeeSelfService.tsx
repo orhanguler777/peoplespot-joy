@@ -4,11 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ModernDatePicker } from "@/components/ui/modern-date-picker";
 import { AvatarUpload } from "@/components/ui/avatar-upload";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
 import { Calendar, Save, User as UserIcon } from "lucide-react";
+import { format } from "date-fns";
 
 interface Employee {
   id: string;
@@ -242,22 +244,33 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="birthday">Birthday *</Label>
-                <Input
-                  id="birthday"
-                  type="date"
-                  value={newProfileData.birthday}
-                  onChange={(e) => setNewProfileData({ ...newProfileData, birthday: e.target.value })}
-                  required
+                <ModernDatePicker
+                  date={newProfileData.birthday ? new Date(newProfileData.birthday) : undefined}
+                  onSelect={(date) => 
+                    setNewProfileData({ 
+                      ...newProfileData, 
+                      birthday: date ? format(date, "yyyy-MM-dd") : "" 
+                    })
+                  }
+                  placeholder="Select your birthday"
+                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                  fromYear={1940}
+                  toYear={new Date().getFullYear()}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="job_entry_date">Job Starting Date *</Label>
-                <Input
-                  id="job_entry_date"
-                  type="date"
-                  value={newProfileData.job_entry_date}
-                  onChange={(e) => setNewProfileData({ ...newProfileData, job_entry_date: e.target.value })}
-                  required
+                <ModernDatePicker
+                  date={newProfileData.job_entry_date ? new Date(newProfileData.job_entry_date) : undefined}
+                  onSelect={(date) => 
+                    setNewProfileData({ 
+                      ...newProfileData, 
+                      job_entry_date: date ? format(date, "yyyy-MM-dd") : "" 
+                    })
+                  }
+                  placeholder="Select your starting date"
+                  fromYear={1980}
+                  toYear={new Date().getFullYear() + 5}
                 />
               </div>
             </div>
@@ -374,20 +387,33 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="birthday">Birthday</Label>
-              <Input
-                id="birthday"
-                type="date"
-                value={employee.birthday}
-                onChange={(e) => setEmployee({ ...employee, birthday: e.target.value })}
+              <ModernDatePicker
+                date={employee.birthday ? new Date(employee.birthday) : undefined}
+                onSelect={(date) => 
+                  setEmployee({ 
+                    ...employee, 
+                    birthday: date ? format(date, "yyyy-MM-dd") : employee.birthday 
+                  })
+                }
+                placeholder="Select your birthday"
+                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                fromYear={1940}
+                toYear={new Date().getFullYear()}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="job_entry_date">Job Starting Date</Label>
-              <Input
-                id="job_entry_date"
-                type="date"
-                value={employee.job_entry_date}
-                onChange={(e) => setEmployee({ ...employee, job_entry_date: e.target.value })}
+              <ModernDatePicker
+                date={employee.job_entry_date ? new Date(employee.job_entry_date) : undefined}
+                onSelect={(date) => 
+                  setEmployee({ 
+                    ...employee, 
+                    job_entry_date: date ? format(date, "yyyy-MM-dd") : employee.job_entry_date 
+                  })
+                }
+                placeholder="Select your starting date"
+                fromYear={1980}
+                toYear={new Date().getFullYear() + 5}
               />
             </div>
           </div>

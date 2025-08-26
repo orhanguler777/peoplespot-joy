@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { EnhancedDatePicker } from "@/components/ui/enhanced-date-picker";
+import { ModernDatePicker } from "@/components/ui/modern-date-picker";
 import { AvatarUpload } from "@/components/ui/avatar-upload";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -242,7 +242,7 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Job Starting Date</Label>
-              <EnhancedDatePicker
+              <ModernDatePicker
                 date={formData.job_entry_date ? new Date(formData.job_entry_date) : undefined}
                 onSelect={(date) =>
                   setFormData({
@@ -251,12 +251,14 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
                   })
                 }
                 placeholder="Select starting date"
+                fromYear={1980}
+                toYear={new Date().getFullYear() + 5}
               />
             </div>
 
             <div className="space-y-2">
               <Label>Birthday</Label>
-              <EnhancedDatePicker
+              <ModernDatePicker
                 date={formData.birthday ? new Date(formData.birthday) : undefined}
                 onSelect={(date) =>
                   setFormData({
@@ -265,6 +267,9 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
                   })
                 }
                 placeholder="Select birthday"
+                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                fromYear={1940}
+                toYear={new Date().getFullYear()}
               />
             </div>
           </div>
