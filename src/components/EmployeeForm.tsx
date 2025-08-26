@@ -31,7 +31,7 @@ interface EmployeeFormProps {
 }
 
 const jobTitles = [
-  "Technical PM & QA Lead",
+  "Other",
   "Frontend Developer / Engineer", 
   "Backend Developer / Engineer",
   "Full Stack Developer",
@@ -41,6 +41,7 @@ const jobTitles = [
   "UI/UX Designer",
   "Product Manager / Owner",
   "Technical Lead / Team Lead",
+  "Technical PM & QA Lead",
   "CTO (Chief Technology Officer)",
   "Sales Development Representative",
   "Account Executive", 
@@ -84,6 +85,7 @@ const departments = [
 const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [customPosition, setCustomPosition] = useState("");
   const [formData, setFormData] = useState<Employee>({
     first_name: employee?.first_name || "",
     last_name: employee?.last_name || "",
@@ -102,18 +104,23 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
     setLoading(true);
 
     try {
+      const finalFormData = {
+        ...formData,
+        position: formData.position === "Other" ? customPosition : formData.position
+      };
+
       if (employee?.id) {
         // Update existing employee
         const { error } = await supabase
           .from("employees")
-          .update(formData)
+          .update(finalFormData)
           .eq("id", employee.id);
 
         if (error) throw error;
         toast({ title: "Employee updated successfully!" });
       } else {
         // Create new employee
-        const { error } = await supabase.from("employees").insert([formData]);
+        const { error } = await supabase.from("employees").insert([finalFormData]);
 
         if (error) throw error;
         toast({ title: "Employee added successfully!" });
@@ -200,9 +207,12 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
               <Label htmlFor="position">Position</Label>
               <Select
                 value={formData.position}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, position: value })
-                }
+                onValueChange={(value) => {
+                  setFormData({ ...formData, position: value });
+                  if (value !== "Other") {
+                    setCustomPosition("");
+                  }
+                }}
                 required
               >
                 <SelectTrigger>
@@ -216,6 +226,16 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
                   ))}
                 </SelectContent>
               </Select>
+              {formData.position === "Other" && (
+                <div className="mt-2">
+                  <Input
+                    placeholder="Enter custom position"
+                    value={customPosition}
+                    onChange={(e) => setCustomPosition(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="department">Department</Label>

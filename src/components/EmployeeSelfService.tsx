@@ -15,7 +15,7 @@ import { format } from "date-fns";
 
 // Job titles and departments - same as EmployeeForm for consistency
 const jobTitles = [
-  "Technical PM & QA Lead",
+  "Other",
   "Frontend Developer / Engineer", 
   "Backend Developer / Engineer",
   "Full Stack Developer",
@@ -25,6 +25,7 @@ const jobTitles = [
   "UI/UX Designer",
   "Product Manager / Owner",
   "Technical Lead / Team Lead",
+  "Technical PM & QA Lead",
   "CTO (Chief Technology Officer)",
   "Sales Development Representative",
   "Account Executive", 
@@ -88,6 +89,8 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [customPosition, setCustomPosition] = useState("");
+  const [editCustomPosition, setEditCustomPosition] = useState("");
   const [newProfileData, setNewProfileData] = useState({
     first_name: "",
     last_name: "",
@@ -135,12 +138,14 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
 
     setSaving(true);
     try {
+      const finalPosition = employee.position === "Other" ? editCustomPosition : employee.position;
+      
       const { error } = await supabase
         .from("employees")
         .update({
           first_name: employee.first_name,
           last_name: employee.last_name,
-          position: employee.position,
+          position: finalPosition,
           department: employee.department,
           phone: employee.phone,
           address: employee.address,
@@ -181,13 +186,15 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
 
     setSaving(true);
     try {
+      const finalPosition = newProfileData.position === "Other" ? customPosition : newProfileData.position;
+      
       const { data, error } = await supabase
         .from("employees")
         .insert({
           first_name: newProfileData.first_name,
           last_name: newProfileData.last_name,
           email: newProfileData.email,
-          position: newProfileData.position,
+          position: finalPosition,
           department: newProfileData.department || null,
           phone: newProfileData.phone || null,
           address: newProfileData.address || null,
@@ -267,7 +274,12 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
                 <Label htmlFor="position">Position *</Label>
                 <Select
                   value={newProfileData.position}
-                  onValueChange={(value) => setNewProfileData({ ...newProfileData, position: value })}
+                  onValueChange={(value) => {
+                    setNewProfileData({ ...newProfileData, position: value });
+                    if (value !== "Other") {
+                      setCustomPosition("");
+                    }
+                  }}
                   required
                 >
                   <SelectTrigger>
@@ -281,6 +293,16 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
                     ))}
                   </SelectContent>
                 </Select>
+                {newProfileData.position === "Other" && (
+                  <div className="mt-2">
+                    <Input
+                      placeholder="Enter custom position"
+                      value={customPosition}
+                      onChange={(e) => setCustomPosition(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -427,7 +449,12 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
               <Label htmlFor="position">Position</Label>
               <Select
                 value={employee.position}
-                onValueChange={(value) => setEmployee({ ...employee, position: value })}
+                onValueChange={(value) => {
+                  setEmployee({ ...employee, position: value });
+                  if (value !== "Other") {
+                    setEditCustomPosition("");
+                  }
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a position" />
@@ -440,6 +467,16 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
                   ))}
                 </SelectContent>
               </Select>
+              {employee.position === "Other" && (
+                <div className="mt-2">
+                  <Input
+                    placeholder="Enter custom position"
+                    value={editCustomPosition}
+                    onChange={(e) => setEditCustomPosition(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
             </div>
           </div>
 
