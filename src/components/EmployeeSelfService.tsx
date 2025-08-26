@@ -87,6 +87,8 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
           last_name: employee.last_name,
           phone: employee.phone,
           address: employee.address,
+          birthday: employee.birthday,
+          job_entry_date: employee.job_entry_date,
         })
         .eq("id", employee.id);
 
@@ -249,7 +251,7 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="job_entry_date">Start Date *</Label>
+                <Label htmlFor="job_entry_date">Job Starting Date *</Label>
                 <Input
                   id="job_entry_date"
                   type="date"
@@ -371,21 +373,21 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="birthday">Birthday (Read Only)</Label>
+              <Label htmlFor="birthday">Birthday</Label>
               <Input
                 id="birthday"
-                value={new Date(employee.birthday).toLocaleDateString()}
-                disabled
-                className="bg-muted"
+                type="date"
+                value={employee.birthday}
+                onChange={(e) => setEmployee({ ...employee, birthday: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="job_entry_date">Start Date (Read Only)</Label>
+              <Label htmlFor="job_entry_date">Job Starting Date</Label>
               <Input
                 id="job_entry_date"
-                value={new Date(employee.job_entry_date).toLocaleDateString()}
-                disabled
-                className="bg-muted"
+                type="date"
+                value={employee.job_entry_date}
+                onChange={(e) => setEmployee({ ...employee, job_entry_date: e.target.value })}
               />
             </div>
           </div>

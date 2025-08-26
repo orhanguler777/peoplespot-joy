@@ -241,7 +241,7 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Job Entry Date</Label>
+              <Label>Job Starting Date</Label>
               <EnhancedDatePicker
                 date={formData.job_entry_date ? new Date(formData.job_entry_date) : undefined}
                 onSelect={(date) =>
@@ -250,7 +250,7 @@ const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
                     job_entry_date: date ? format(date, "yyyy-MM-dd") : "",
                   })
                 }
-                placeholder="Select entry date"
+                placeholder="Select starting date"
               />
             </div>
 
