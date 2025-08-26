@@ -25,6 +25,9 @@ if (adminEmail && !isValidCc) {
   console.warn("ADMIN_NOTIFICATION_EMAIL is set but invalid format, skipping cc.");
 }
 
+// Simple throttle to avoid provider rate limits (2 req/sec)
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 interface Employee {
   id: string;
   first_name: string;
@@ -99,6 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
 
       console.log(`Birthday notification sent for ${employee.first_name} ${employee.last_name}`);
+      await sleep(600); // throttle to <= 2 req/sec
     }
 
     // Send anniversary notifications
@@ -122,6 +126,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
 
       console.log(`Anniversary notification sent for ${employee.first_name} ${employee.last_name}`);
+      await sleep(600); // throttle to <= 2 req/sec
     }
 
     const totalNotifications = (birthdayEmployees?.length || 0) + (anniversaryEmployees?.length || 0);
