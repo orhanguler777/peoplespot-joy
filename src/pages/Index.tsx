@@ -13,10 +13,11 @@ import EmployeeSelfService from "@/components/EmployeeSelfService";
 import InviteEmployee from "@/components/InviteEmployee";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { User, Session } from "@supabase/supabase-js";
 
 const Index = () => {
+  const navigate = useNavigate();
   console.log('Index render started', { 
     timestamp: Date.now(),
     loading: undefined, // will be set below
@@ -127,12 +128,12 @@ const Index = () => {
         console.warn('Global sign out failed:', err);
       }
       
-      // Force page reload and redirect to auth page
-      window.location.href = '/auth';
+      // Use React Router navigation instead of window.location
+      navigate('/auth', { replace: true });
     } catch (error: any) {
       console.error('Sign out error:', error);
-      // Force redirect even if sign out fails
-      window.location.href = '/auth';
+      // Use React Router navigation even if sign out fails
+      navigate('/auth', { replace: true });
     }
   };
 
