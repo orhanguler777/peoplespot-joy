@@ -84,13 +84,13 @@ const handler = async (req: Request): Promise<Response> => {
     // Send birthday notifications
     for (const employee of birthdayEmployees || []) {
       const age = today.getFullYear() - new Date(employee.birthday).getFullYear();
-      try {
-        const emailResponse = await resend.emails.send({
-          from: fromEmail,
-          to: [employee.email],
-          cc: isValidCc ? [adminEmail!] : undefined,
-          subject: `🎂 Happy Birthday, ${employee.first_name} ${employee.last_name}!`,
-          html: `
+      
+      await resend.emails.send({
+        from: fromEmail,
+        to: [employee.email],
+        cc: isValidCc ? [adminEmail!] : undefined,
+        subject: `🎂 Happy Birthday, ${employee.first_name} ${employee.last_name}!`,
+        html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <p>Hi ${employee.first_name} ${employee.last_name},</p>
             <p>Wishing you a very Happy Birthday and a wonderful year ahead! 🎉</p>
@@ -99,25 +99,22 @@ const handler = async (req: Request): Promise<Response> => {
             <p>Best wishes,<br/>PIXUP TEAM</p>
           </div>
         `,
-        });
-        console.log(`Birthday email response for ${employee.email}:`, emailResponse);
-        console.log(`Birthday notification sent for ${employee.first_name} ${employee.last_name}`);
-        await sleep(600); // throttle
-      } catch (err) {
-        console.error(`Failed to send birthday email to ${employee.email}:`, err);
-      }
+      });
+
+      console.log(`Birthday notification sent for ${employee.first_name} ${employee.last_name}`);
+      await sleep(600); // throttle to <= 2 req/sec
     }
 
     // Send anniversary notifications
     for (const employee of anniversaryEmployees || []) {
       const yearsOfService = today.getFullYear() - new Date(employee.job_entry_date).getFullYear();
-      try {
-        const emailResponse = await resend.emails.send({
-          from: fromEmail,
-          to: [employee.email],
-          cc: isValidCc ? [adminEmail!] : undefined,
-          subject: `🎉 Happy Work Anniversary, ${employee.first_name} ${employee.last_name}!`,
-          html: `
+      
+      await resend.emails.send({
+        from: fromEmail,
+        to: [employee.email],
+        cc: isValidCc ? [adminEmail!] : undefined,
+        subject: `🎉 Happy Work Anniversary, ${employee.first_name} ${employee.last_name}!`,
+        html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <p>Hi ${employee.first_name} ${employee.last_name},</p>
             <p>Congratulations on your ${yearsOfService}-year anniversary with us! 🌟</p>
@@ -126,13 +123,10 @@ const handler = async (req: Request): Promise<Response> => {
             <p>Best regards,<br/>PIXUP TEAM</p>
           </div>
         `,
-        });
-        console.log(`Anniversary email response for ${employee.email}:`, emailResponse);
-        console.log(`Anniversary notification sent for ${employee.first_name} ${employee.last_name}`);
-        await sleep(600); // throttle
-      } catch (err) {
-        console.error(`Failed to send anniversary email to ${employee.email}:`, err);
-      }
+      });
+
+      console.log(`Anniversary notification sent for ${employee.first_name} ${employee.last_name}`);
+      await sleep(600); // throttle to <= 2 req/sec
     }
 
     const totalNotifications = (birthdayEmployees?.length || 0) + (anniversaryEmployees?.length || 0);
