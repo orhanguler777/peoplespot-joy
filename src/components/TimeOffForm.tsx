@@ -141,26 +141,37 @@ const TimeOffForm = ({ onSave, onCancel, currentUser, isAdmin = false }: TimeOff
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="employee">Employee</Label>
-            <Select
-              value={formData.employee_id}
-              onValueChange={(value) =>
-                setFormData({ ...formData, employee_id: value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select employee" />
-              </SelectTrigger>
-              <SelectContent>
-                {employees.map((employee) => (
-                  <SelectItem key={employee.id} value={employee.id}>
-                    {employee.first_name} {employee.last_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {isAdmin ? (
+            <div className="space-y-2">
+              <Label htmlFor="employee">Employee</Label>
+              <Select
+                value={formData.employee_id}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, employee_id: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select employee" />
+                </SelectTrigger>
+                <SelectContent>
+                  {employees.map((employee) => (
+                    <SelectItem key={employee.id} value={employee.id}>
+                      {employee.first_name} {employee.last_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="employee">Employee</Label>
+              <Input
+                value={employees.length > 0 ? `${employees[0].first_name} ${employees[0].last_name}` : "Loading..."}
+                readOnly
+                className="bg-muted cursor-not-allowed"
+              />
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="request_type">Request Type</Label>
