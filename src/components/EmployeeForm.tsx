@@ -85,12 +85,16 @@ const departments = [
 const EmployeeForm = ({ employee, onSave, onCancel }: EmployeeFormProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [customPosition, setCustomPosition] = useState("");
+  
+  // Check if employee position is a custom one (not in predefined list)
+  const isCustomPosition = employee?.position && !jobTitles.includes(employee.position);
+  
+  const [customPosition, setCustomPosition] = useState(isCustomPosition ? employee.position : "");
   const [formData, setFormData] = useState<Employee>({
     first_name: employee?.first_name || "",
     last_name: employee?.last_name || "",
     email: employee?.email || "",
-    position: employee?.position || "",
+    position: isCustomPosition ? "Other" : (employee?.position || ""),
     department: employee?.department || "",
     job_entry_date: employee?.job_entry_date || "",
     birthday: employee?.birthday || "",
