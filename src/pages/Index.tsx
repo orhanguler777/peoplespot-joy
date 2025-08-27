@@ -11,6 +11,7 @@ import TimeOffForm from "@/components/TimeOffForm";
 import TimeOffList from "@/components/TimeOffList";
 import EmployeeSelfService from "@/components/EmployeeSelfService";
 import InviteEmployee from "@/components/InviteEmployee";
+import AppLayout from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -270,22 +271,42 @@ const Index = () => {
   // Render different components based on state
   if (showInviteForm && inviteEmployeeData) {
     return (
-      <InviteEmployee
-        employeeId={inviteEmployeeData.id}
-        employeeName={`${inviteEmployeeData.first_name} ${inviteEmployeeData.last_name}`}
-        employeeEmail={inviteEmployeeData.email}
-        onInvite={handleInviteSent}
-        onCancel={() => {
+      <AppLayout 
+        user={user} 
+        userProfile={userProfile} 
+        showBackButton 
+        onBack={() => {
           setShowInviteForm(false);
           setInviteEmployeeData(null);
         }}
-      />
+        title="Invite Employee"
+      >
+        <InviteEmployee
+          employeeId={inviteEmployeeData.id}
+          employeeName={`${inviteEmployeeData.first_name} ${inviteEmployeeData.last_name}`}
+          employeeEmail={inviteEmployeeData.email}
+          onInvite={handleInviteSent}
+          onCancel={() => {
+            setShowInviteForm(false);
+            setInviteEmployeeData(null);
+          }}
+        />
+      </AppLayout>
     );
   }
 
   if (showEmployeeForm) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <AppLayout 
+        user={user} 
+        userProfile={userProfile} 
+        showBackButton 
+        onBack={() => {
+          setShowEmployeeForm(false);
+          setEditingEmployee(null);
+        }}
+        title={editingEmployee ? "Edit Employee" : "Add New Employee"}
+      >
         <EmployeeForm
           employee={editingEmployee}
           onSave={handleEmployeeSave}
@@ -294,108 +315,76 @@ const Index = () => {
             setEditingEmployee(null);
           }}
         />
-      </div>
+      </AppLayout>
     );
   }
 
   if (showTimeOffForm) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <AppLayout 
+        user={user} 
+        userProfile={userProfile} 
+        showBackButton 
+        onBack={() => setShowTimeOffForm(false)}
+        title="Request Time Off"
+      >
         <TimeOffForm
           onSave={handleTimeOffSave}
           onCancel={() => setShowTimeOffForm(false)}
           currentUser={user}
           isAdmin={isAdmin}
         />
-      </div>
+      </AppLayout>
     );
   }
 
   // Main dashboard UI
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header with dark blue background */}
-      <div className="bg-slate-900 text-white">
-        <div className="container mx-auto px-4 sm:px-6 py-4">
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-              <img 
-                src="/lovable-uploads/b0cbec1a-8a8d-4f30-86da-432e07c925a8.png" 
-                alt="Pixup Logo" 
-                className="h-12 sm:h-16 w-auto"
-              />
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold">HR Management System</h1>
-                <p className="text-xs sm:text-sm text-slate-300">
-                  {isAdmin 
-                    ? "Manage employees, track time-off requests, and celebrate milestones"
-                    : "Your employee self-service portal"
-                  }
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-              <div className="text-left sm:text-right">
-                <p className="text-xs sm:text-sm text-slate-300">Welcome back</p>
-                <p className="font-medium text-white text-sm sm:text-base">{user.email}</p>
-                <p className="text-xs text-slate-400 capitalize">{userProfile?.role || 'employee'}</p>
-              </div>
-              <Button variant="outline" onClick={handleSignOut} className="bg-white border-white text-slate-900 hover:bg-slate-100 w-full sm:w-auto">
-                <LogOut className="h-4 w-4 mr-2 text-slate-900" />
-                Sign Out
+    <AppLayout user={user} userProfile={userProfile}>
+      <Tabs defaultValue={isAdmin ? "employees" : "profile"} className="space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-3 max-w-md lg:max-w-lg' : 'grid-cols-2 max-w-xs lg:max-w-md'}`}>
+            {isAdmin && (
+              <TabsTrigger value="employees" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Employees</span>
+                <span className="sm:hidden">Staff</span>
+              </TabsTrigger>
+            )}
+            {!isAdmin && (
+              <TabsTrigger value="profile" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">My Profile</span>
+                <span className="sm:hidden">Profile</span>
+              </TabsTrigger>
+            )}
+            <TabsTrigger value="timeoff" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Time Off</span>
+              <span className="sm:hidden">Time Off</span>
+            </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="notifications" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Mail className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Notifications</span>
+                <span className="sm:hidden">Notify</span>
+              </TabsTrigger>
+            )}
+          </TabsList>
+          
+          {isAdmin && (
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full lg:w-auto">
+              <Button onClick={() => setShowEmployeeForm(true)} className="flex items-center justify-center gap-2 text-sm">
+                <Plus className="h-4 w-4" />
+                Add Employee
+              </Button>
+              <Button onClick={sendTestNotifications} variant="outline" className="flex items-center justify-center gap-2 text-sm">
+                <Mail className="h-4 w-4" />
+                Check Notifications
               </Button>
             </div>
-          </div>
+          )}
         </div>
-      </div>
-
-      {/* Main content */}
-      <div className="container mx-auto p-4 sm:p-6">
-
-        <Tabs defaultValue={isAdmin ? "employees" : "profile"} className="space-y-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-3 max-w-md lg:max-w-lg' : 'grid-cols-2 max-w-xs lg:max-w-md'}`}>
-              {isAdmin && (
-                <TabsTrigger value="employees" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Employees</span>
-                  <span className="sm:hidden">Staff</span>
-                </TabsTrigger>
-              )}
-              {!isAdmin && (
-                <TabsTrigger value="profile" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">My Profile</span>
-                  <span className="sm:hidden">Profile</span>
-                </TabsTrigger>
-              )}
-              <TabsTrigger value="timeoff" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Time Off</span>
-                <span className="sm:hidden">Time Off</span>
-              </TabsTrigger>
-              {isAdmin && (
-                <TabsTrigger value="notifications" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                  <Mail className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Notifications</span>
-                  <span className="sm:hidden">Notify</span>
-                </TabsTrigger>
-              )}
-            </TabsList>
-            
-            {isAdmin && (
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full lg:w-auto">
-                <Button onClick={() => setShowEmployeeForm(true)} className="flex items-center justify-center gap-2 text-sm">
-                  <Plus className="h-4 w-4" />
-                  Add Employee
-                </Button>
-                <Button onClick={sendTestNotifications} variant="outline" className="flex items-center justify-center gap-2 text-sm">
-                  <Mail className="h-4 w-4" />
-                  Check Notifications
-                </Button>
-              </div>
-            )}
-          </div>
 
           {isAdmin && (
             <TabsContent value="employees">
@@ -478,9 +467,8 @@ const Index = () => {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
-    </div>
-  );
-};
+      </AppLayout>
+    );
+  };
 
 export default Index;
