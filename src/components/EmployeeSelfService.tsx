@@ -107,6 +107,14 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
     fetchEmployeeData();
   }, [user]);
 
+  useEffect(() => {
+    // Handle custom position when employee data is loaded
+    if (employee && employee.position && !jobTitles.includes(employee.position)) {
+      setEditCustomPosition(employee.position);
+      setEmployee({ ...employee, position: "Other" });
+    }
+  }, [employee?.id]); // Only run when employee ID changes (i.e., when first loaded)
+
   const fetchEmployeeData = async () => {
     try {
       const { data, error } = await supabase
