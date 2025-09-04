@@ -92,6 +92,21 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // If the user existed already, reset password and confirm email to ensure immediate login
+    if (action === 'exists') {
+      const { error: updateErr } = await supabase.auth.admin.updateUserById(userId as string, {
+        password,
+        email_confirm: true,
+      });
+      if (updateErr) {
+        console.error('updateUserById error:', updateErr);
+        return new Response(JSON.stringify({ error: updateErr.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     return new Response(
       JSON.stringify({ success: true, email, userId, action }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
