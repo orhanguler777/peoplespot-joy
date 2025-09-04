@@ -32,33 +32,51 @@ Deno.serve(async (req: Request) => {
     const email = 'admin@pixupplay.com';
     const password = 'Pix123@';
 
-    // Check if user already exists
-    const { data: existingUserData, error: getUserErr } = await supabase.auth.admin.getUserByEmail(email);
-    if (getUserErr && getUserErr.message && !getUserErr.message.includes('User not found')) {
-      console.error('getUserByEmail error:', getUserErr);
-      return new Response(JSON.stringify({ error: getUserErr.message }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    let userId: string | null = null;
+    let action: 'created' | 'exists' = 'created';
 
-    let userId: string | null = existingUserData?.user?.id ?? null;
-    let action: 'created' | 'exists' = 'exists';
+    // Try creating the user first
+    const { data: created, error: createErr } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+    });
 
-    if (!userId) {
-      const { data: created, error: createErr } = await supabase.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-      });
-      if (createErr) {
-        console.error('createUser error:', createErr);
-        return new Response(JSON.stringify({ error: createErr.message }), {
+    if (createErr) {
+      // If the user already exists, fallback to list users and find by email
+      action = 'exists';
+      console.error('createUser error (will attempt to find existing):', createErr);
+
+      let page = 1;
+      const perPage = 1000;
+      let found: any = null;
+
+      while (true) {
+        const { data: listData, error: listErr } = await supabase.auth.admin.listUsers({ page, perPage });
+        if (listErr) {
+          console.error('listUsers error:', listErr);
+          return new Response(JSON.stringify({ error: listErr.message }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const users = (listData as any)?.users ?? [];
+        found = users.find((u: any) => (u.email || '').toLowerCase() === email.toLowerCase()) ?? null;
+        if (found || users.length < perPage) break;
+        page += 1;
+      }
+
+      if (!found) {
+        return new Response(JSON.stringify({ error: 'User exists but could not be retrieved' }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      userId = created.user.id;
+
+      userId = found.id as string;
+    } else {
+      userId = created!.user.id;
       action = 'created';
     }
 
