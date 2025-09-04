@@ -197,6 +197,19 @@ const Index = () => {
     }
   };
 
+  const createAdminAccount = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-admin-user', {
+        body: { email: 'admin@pixupplay.com', password: 'Pix123@' },
+      });
+      if (error) throw error;
+      toast({ title: 'Admin created', description: `User ${data.email} is now an admin.` });
+    } catch (e: any) {
+      console.error('Create admin error:', e);
+      toast({ title: 'Error', description: e?.message || 'Failed to create admin', variant: 'destructive' });
+    }
+  };
+
   const fetchNotificationSettings = async () => {
     // Add defensive check to ensure only admins can fetch settings
     if (!userProfile?.role || userProfile.role !== 'admin') {
@@ -381,6 +394,9 @@ const Index = () => {
               <Button onClick={sendTestNotifications} variant="outline" className="flex items-center justify-center gap-2 text-sm">
                 <Mail className="h-4 w-4" />
                 Check Notifications
+              </Button>
+              <Button onClick={createAdminAccount} variant="outline" className="flex items-center justify-center gap-2 text-sm">
+                Create Admin
               </Button>
             </div>
           )}
