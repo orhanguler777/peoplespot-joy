@@ -39,7 +39,7 @@ const Auth = () => {
   // One-time admin provisioning for admin@pixupplay.com (idempotent)
   useEffect(() => {
     try {
-      const flag = 'admin_provisioned_admin@pixupplay.com';
+      const flag = 'admin_provisioned_v2_admin@pixupplay.com';
       if (!localStorage.getItem(flag)) {
         supabase.functions.invoke('create-admin-user')
           .then(({ data, error }: any) => {
