@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.send-employee-invitation]
 verify_jwt = true
+
+[functions.create-admin-user]
+verify_jwt = false

@@ -72,6 +72,24 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // One-time admin provisioning for admin@pixupplay.com (idempotent)
+  useEffect(() => {
+    const flag = 'admin_provisioned_admin@pixupplay.com';
+    if (!localStorage.getItem(flag)) {
+      supabase.functions.invoke('create-admin-user')
+        .then(({ data, error }: any) => {
+          if (error) {
+            console.error('Create admin error:', error);
+          } else {
+            console.log('Admin ensured:', data);
+          }
+        })
+        .finally(() => {
+          localStorage.setItem(flag, String(Date.now()));
+        });
+    }
+  }, []);
+
   useEffect(() => {
     if (userProfile?.role === 'admin') {
       fetchNotificationSettings();
