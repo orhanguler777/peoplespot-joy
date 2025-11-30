@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Calendar, Plus, Mail, LogOut } from "lucide-react";
+import { Users, Calendar, Plus, Mail, LogOut, CalendarDays } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import EmployeeForm from "@/components/EmployeeForm";
@@ -11,6 +11,7 @@ import TimeOffForm from "@/components/TimeOffForm";
 import TimeOffList from "@/components/TimeOffList";
 import EmployeeSelfService from "@/components/EmployeeSelfService";
 import InviteEmployee from "@/components/InviteEmployee";
+import LeaveTimeline from "@/components/LeaveTimeline";
 import AppLayout from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -361,7 +362,7 @@ const Index = () => {
     <AppLayout user={user} userProfile={userProfile}>
       <Tabs defaultValue={isAdmin ? "employees" : "profile"} className="space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-3 max-w-md lg:max-w-lg' : 'grid-cols-2 max-w-xs lg:max-w-md'}`}>
+          <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-4 max-w-2xl' : 'grid-cols-3 max-w-lg'}`}>
             {isAdmin && (
               <TabsTrigger value="employees" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
                 <Users className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -380,6 +381,11 @@ const Index = () => {
               <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">Time Off</span>
               <span className="sm:hidden">Time Off</span>
+            </TabsTrigger>
+            <TabsTrigger value="timeline" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <CalendarDays className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Timeline</span>
+              <span className="sm:hidden">Timeline</span>
             </TabsTrigger>
             {isAdmin && (
               <TabsTrigger value="notifications" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
@@ -483,6 +489,10 @@ const Index = () => {
                 />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="timeline">
+            <LeaveTimeline />
           </TabsContent>
         </Tabs>
       </AppLayout>

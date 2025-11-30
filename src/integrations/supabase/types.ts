@@ -189,10 +189,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      is_admin: { Args: { user_id: string }; Returns: boolean }
       set_notification_time: {
         Args: { p_time: string; p_timezone?: string }
         Returns: undefined
