@@ -119,6 +119,13 @@ export type Database = {
             foreignKeyName: "profiles_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
+            referencedRelation: "employee_timeline_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
@@ -172,7 +179,21 @@ export type Database = {
             foreignKeyName: "time_off_requests_approved_by_fkey"
             columns: ["approved_by"]
             isOneToOne: false
+            referencedRelation: "employee_timeline_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_off_requests_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
             referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_off_requests_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_timeline_view"
             referencedColumns: ["id"]
           },
           {
@@ -186,7 +207,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      employee_timeline_view: {
+        Row: {
+          first_name: string | null
+          id: string | null
+          last_name: string | null
+        }
+        Insert: {
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+        }
+        Update: {
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_admin: { Args: { user_id: string }; Returns: boolean }
