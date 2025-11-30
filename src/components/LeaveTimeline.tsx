@@ -46,9 +46,9 @@ const LeaveTimeline = () => {
       const monthStart = startOfMonth(currentMonth);
       const monthEnd = endOfMonth(currentMonth);
 
-      // Fetch all employees from the restricted view (only names, no sensitive data)
+      // Fetch all employees (RLS policy allows viewing names for timeline)
       const { data: employeesData, error: employeesError } = await supabase
-        .from("employee_timeline_view")
+        .from("employees")
         .select("id, first_name, last_name")
         .order("first_name", { ascending: true });
 
