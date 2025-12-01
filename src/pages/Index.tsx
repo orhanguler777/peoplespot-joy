@@ -360,13 +360,13 @@ const Index = () => {
   // Main dashboard UI
   return (
     <AppLayout user={user} userProfile={userProfile}>
-      <Tabs defaultValue={isAdmin ? "employees" : "profile"} className="space-y-6">
+      <Tabs defaultValue="employees" className="space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-4 max-w-2xl' : 'grid-cols-4 max-w-2xl'}`}>
             <TabsTrigger value="employees" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
               <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Employees</span>
-              <span className="sm:hidden">Staff</span>
+              <span className="hidden sm:inline">Employee List</span>
+              <span className="sm:hidden">List</span>
             </TabsTrigger>
             {!isAdmin && (
               <TabsTrigger value="profile" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
