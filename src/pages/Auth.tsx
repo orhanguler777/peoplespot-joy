@@ -8,12 +8,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
 import { User } from "@supabase/supabase-js";
+import { Mail } from "lucide-react";
 
 const Auth = () => {
   const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -110,20 +112,8 @@ const Auth = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Account created!",
-        description: "Please check your email to verify your account.",
-      });
-
-      // Redirect to sign-in form
-      setIsSignUp(false);
-      
-      // Clear form data
-      setFormData({
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
+      // Show prominent success screen
+      setSignUpSuccess(true);
     } catch (error: any) {
       toast({
         title: "Sign up failed",
@@ -148,6 +138,52 @@ const Auth = () => {
 
   if (user) {
     return <Navigate to="/" replace />;
+  }
+
+  // Show success screen after sign-up
+  if (signUpSuccess) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="w-full max-w-lg border-green-500/50">
+          <CardContent className="pt-12 pb-8 text-center space-y-6">
+            <div className="flex justify-center">
+              <div className="rounded-full bg-green-500/10 p-6">
+                <Mail className="h-16 w-16 text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <h2 className="text-3xl font-bold tracking-tight">Check Your Inbox!</h2>
+              <div className="space-y-2 text-base text-muted-foreground">
+                <p>
+                  We've sent a verification link to{" "}
+                  <span className="font-semibold text-foreground">{formData.email}</span>
+                </p>
+                <p>
+                  Please check your email and click the link to activate your account.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
+              💡 Don't forget to check your spam folder if you don't see it!
+            </div>
+
+            <Button 
+              onClick={() => {
+                setSignUpSuccess(false);
+                setIsSignUp(false);
+                setFormData({ email: "", password: "", confirmPassword: "" });
+              }}
+              className="w-full"
+              size="lg"
+            >
+              Back to Sign In
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
