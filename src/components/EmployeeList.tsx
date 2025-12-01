@@ -177,7 +177,7 @@ const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps)
 
             <div className="pt-1 border-t text-xs text-muted-foreground space-y-1">
               <div className="flex justify-between items-center">
-                <span>Started: {format(new Date(employee.job_entry_date), "MMM yyyy")}</span>
+                <span>Start Date: {employee.job_entry_date ? format(new Date(employee.job_entry_date), "MMM yyyy") : "-"}</span>
                 <div className="flex gap-1">
                   {employee.user_id && (
                     <Badge variant="secondary" className="text-xs px-1 py-0">
@@ -191,7 +191,7 @@ const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps)
                   )}
                 </div>
               </div>
-              <div>Birthday: {format(new Date(employee.birthday), "MMM d")}</div>
+              <div>Birth Date: {employee.birthday ? format(new Date(employee.birthday), "MMM d") : "-"}</div>
             </div>
           </CardContent>
         </Card>
