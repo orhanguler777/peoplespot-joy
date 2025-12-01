@@ -12,7 +12,10 @@ import {
   addMonths, 
   subMonths,
   isWeekend,
-  isSameDay
+  isSameDay,
+  parseISO,
+  startOfDay,
+  endOfDay
 } from "date-fns";
 
 interface Employee {
@@ -91,8 +94,8 @@ const LeaveTimeline = () => {
       (req) =>
         req.employee_id === employeeId &&
         isWithinInterval(date, {
-          start: new Date(req.start_date),
-          end: new Date(req.end_date),
+          start: startOfDay(parseISO(req.start_date)),
+          end: endOfDay(parseISO(req.end_date)),
         })
     );
     return request || null;
