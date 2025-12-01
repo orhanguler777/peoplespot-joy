@@ -362,14 +362,12 @@ const Index = () => {
     <AppLayout user={user} userProfile={userProfile}>
       <Tabs defaultValue={isAdmin ? "employees" : "profile"} className="space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-4 max-w-2xl' : 'grid-cols-3 max-w-lg'}`}>
-            {isAdmin && (
-              <TabsTrigger value="employees" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Employees</span>
-                <span className="sm:hidden">Staff</span>
-              </TabsTrigger>
-            )}
+          <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-4 max-w-2xl' : 'grid-cols-4 max-w-2xl'}`}>
+            <TabsTrigger value="employees" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Employees</span>
+              <span className="sm:hidden">Staff</span>
+            </TabsTrigger>
             {!isAdmin && (
               <TabsTrigger value="profile" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
                 <Users className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -410,26 +408,24 @@ const Index = () => {
           )}
         </div>
 
-          {isAdmin && (
-            <TabsContent value="employees">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Employee Directory</CardTitle>
-                  <CardDescription>
-                    View and manage all employees in the organization
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <EmployeeList
-                    onEdit={handleEmployeeEdit}
-                    onInvite={handleInviteEmployee}
-                    refresh={refreshEmployees}
-                    isAdmin={isAdmin}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
+          <TabsContent value="employees">
+            <Card>
+              <CardHeader>
+                <CardTitle>Employee Directory</CardTitle>
+                <CardDescription>
+                  View and manage all employees in the organization
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <EmployeeList
+                  onEdit={handleEmployeeEdit}
+                  onInvite={handleInviteEmployee}
+                  refresh={refreshEmployees}
+                  isAdmin={isAdmin}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {!isAdmin && (
             <TabsContent value="profile">
