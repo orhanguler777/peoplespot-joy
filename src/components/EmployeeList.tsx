@@ -167,17 +167,21 @@ const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps)
                 <span className="truncate">{employee.email}</span>
               </div>
               
-              {employee.phone && (
-                <div className="flex items-center gap-1">
-                  <Phone className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                  <span className="truncate">{employee.phone}</span>
-                </div>
-              )}
+              <div className="flex items-center gap-1">
+                {employee.phone ? (
+                  <>
+                    <Phone className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                    <span className="truncate">{employee.phone}</span>
+                  </>
+                ) : (
+                  <span>-</span>
+                )}
+              </div>
             </div>
 
             <div className="pt-1 border-t text-xs text-muted-foreground space-y-1">
               <div className="flex justify-between items-center">
-                <span>Start Date: {employee.job_entry_date ? format(new Date(employee.job_entry_date), "MMM yyyy") : "-"}</span>
+                <span>Start Date: {employee.job_entry_date ? format(new Date(employee.job_entry_date), "d MMM yyyy") : "-"}</span>
                 <div className="flex gap-1">
                   {employee.user_id && (
                     <Badge variant="secondary" className="text-xs px-1 py-0">
@@ -191,7 +195,7 @@ const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps)
                   )}
                 </div>
               </div>
-              <div>Birth Date: {employee.birthday ? format(new Date(employee.birthday), "MMM d") : "-"}</div>
+              <div>Birth Date: {employee.birthday ? format(new Date(employee.birthday), "d MMM yyyy") : "-"}</div>
             </div>
           </CardContent>
         </Card>
