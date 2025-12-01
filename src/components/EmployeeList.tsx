@@ -174,7 +174,7 @@ const EmployeeList = ({ onEdit, onInvite, refresh, isAdmin }: EmployeeListProps)
                     <span className="truncate">{employee.phone}</span>
                   </>
                 ) : (
-                  <span>-</span>
+                  <span>Phone: -</span>
                 )}
               </div>
             </div>
