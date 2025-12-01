@@ -3,6 +3,7 @@ import { ArrowLeft, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
+import { useNavigate } from "react-router-dom";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -22,18 +23,37 @@ const AppLayout = ({
   title = "HR Management System"
 }: AppLayoutProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const cleanupAuthState = () => {
+    localStorage.removeItem('supabase.auth.token');
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+        localStorage.removeItem(key);
+      }
+    });
+    Object.keys(sessionStorage || {}).forEach((key) => {
+      if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+        sessionStorage.removeItem(key);
+      }
+    });
+  };
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      cleanupAuthState();
+      
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        console.warn('Global sign out failed:', err);
+      }
+      
       toast({ title: "Signed out successfully" });
-    } catch (error) {
-      console.error("Error signing out:", error);
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive",
-      });
+      navigate('/auth', { replace: true });
+    } catch (error: any) {
+      console.error('Sign out error:', error);
+      navigate('/auth', { replace: true });
     }
   };
 
