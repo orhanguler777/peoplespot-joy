@@ -101,6 +101,7 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
     address: "",
     birthday: "",
     job_entry_date: "",
+    avatar_url: "",
   });
 
   useEffect(() => {
@@ -209,6 +210,7 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
           birthday: newProfileData.birthday,
           job_entry_date: newProfileData.job_entry_date,
           user_id: user.id,
+          avatar_url: newProfileData.avatar_url || null,
         })
         .select()
         .single();
@@ -245,6 +247,18 @@ const EmployeeSelfService = ({ user }: EmployeeSelfServiceProps) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Avatar Upload Section for new profile */}
+          <div className="flex justify-center mb-6">
+            <AvatarUpload
+              currentAvatarUrl={newProfileData.avatar_url || undefined}
+              onAvatarUpdate={(url) => setNewProfileData({ ...newProfileData, avatar_url: url })}
+              fallbackText={newProfileData.first_name && newProfileData.last_name 
+                ? `${newProfileData.first_name[0]}${newProfileData.last_name[0]}` 
+                : "?"}
+              size="lg"
+            />
+          </div>
+          
           <form onSubmit={handleCreateProfile} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
