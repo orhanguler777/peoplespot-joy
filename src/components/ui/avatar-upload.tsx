@@ -81,23 +81,25 @@ export function AvatarUpload({
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
+      // Get public URL with cache-busting timestamp
       const { data: { publicUrl } } = supabase.storage
         .from('employee-avatars')
         .getPublicUrl(fileName);
+      
+      const urlWithCacheBust = `${publicUrl}?t=${Date.now()}`;
 
       // Update employee record only if employeeId is provided
       if (employeeId) {
         const { error: updateError } = await supabase
           .from('employees')
-          .update({ avatar_url: publicUrl })
+          .update({ avatar_url: urlWithCacheBust })
           .eq('id', employeeId);
 
         if (updateError) throw updateError;
       }
 
-      setAvatarUrl(publicUrl);
-      onAvatarUpdate(publicUrl);
+      setAvatarUrl(urlWithCacheBust);
+      onAvatarUpdate(urlWithCacheBust);
 
       toast({
         title: "Avatar updated",
