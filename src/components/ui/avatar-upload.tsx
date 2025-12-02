@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Upload, X } from "lucide-react";
@@ -24,6 +24,11 @@ export function AvatarUpload({
   const [avatarUrl, setAvatarUrl] = useState(currentAvatarUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Sync local state with prop changes
+  useEffect(() => {
+    setAvatarUrl(currentAvatarUrl);
+  }, [currentAvatarUrl]);
 
   const sizeClasses = {
     sm: "h-12 w-12",
