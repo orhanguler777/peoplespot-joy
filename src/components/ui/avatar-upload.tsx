@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface AvatarUploadProps {
   currentAvatarUrl?: string;
-  employeeId: string;
+  employeeId?: string;
   onAvatarUpdate: (avatarUrl: string) => void;
   fallbackText?: string;
   size?: "sm" | "md" | "lg";
@@ -86,13 +86,15 @@ export function AvatarUpload({
         .from('employee-avatars')
         .getPublicUrl(fileName);
 
-      // Update employee record
-      const { error: updateError } = await supabase
-        .from('employees')
-        .update({ avatar_url: publicUrl })
-        .eq('id', employeeId);
+      // Update employee record only if employeeId is provided
+      if (employeeId) {
+        const { error: updateError } = await supabase
+          .from('employees')
+          .update({ avatar_url: publicUrl })
+          .eq('id', employeeId);
 
-      if (updateError) throw updateError;
+        if (updateError) throw updateError;
+      }
 
       setAvatarUrl(publicUrl);
       onAvatarUpdate(publicUrl);
@@ -130,13 +132,15 @@ export function AvatarUpload({
         await supabase.storage.from('employee-avatars').remove(paths);
       }
 
-      // Update employee record
-      const { error } = await supabase
-        .from('employees')
-        .update({ avatar_url: null })
-        .eq('id', employeeId);
+      // Update employee record only if employeeId is provided
+      if (employeeId) {
+        const { error } = await supabase
+          .from('employees')
+          .update({ avatar_url: null })
+          .eq('id', employeeId);
 
-      if (error) throw error;
+        if (error) throw error;
+      }
 
       setAvatarUrl(undefined);
       onAvatarUpdate('');
